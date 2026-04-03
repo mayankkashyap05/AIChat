@@ -1,0 +1,33 @@
+model_list:
+  - model_name: ollama/llama3.2
+    litellm_params:
+      model: ollama/llama3.2
+      api_base: http://localhost:11434
+      stream: true
+
+  - model_name: ollama/llama3.1
+    litellm_params:
+      model: ollama/llama3.1
+      api_base: http://localhost:11434
+      stream: false
+
+  - model_name: ollama/mistral
+    litellm_params:
+      model: ollama/mistral
+      api_base: http://localhost:11434
+      stream: false
+
+  - model_name: ollama/gemma2
+    litellm_params:
+      model: ollama/gemma2
+      api_base: http://localhost:11434
+      stream: false
+
+litellm_settings:
+  drop_params: true
+  set_verbose: false
+  request_timeout: 300
+  num_retries: 2
+
+general_settings:
+  master_key: sk-litellm-9f8d7c6b5a4xyz

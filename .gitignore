@@ -1,0 +1,69 @@
+# ════════════════════════════════════════════════
+# OS & Editor Files
+# ════════════════════════════════════════════════
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ════════════════════════════════════════════════
+# Environment Variables & Secrets
+# ════════════════════════════════════════════════
+# Protects your Google OAuth, JWT secrets, and DB passwords
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ════════════════════════════════════════════════
+# Python & Virtual Environments
+# ════════════════════════════════════════════════
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ════════════════════════════════════════════════
+# Node Dependencies (Backend & Frontend)
+# ════════════════════════════════════════════════
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# ════════════════════════════════════════════════
+# Backend (Express & TypeScript)
+# ════════════════════════════════════════════════
+# Output directory specified in backend/tsconfig.json
+backend/dist/
+dist/
+
+# ════════════════════════════════════════════════
+# Frontend (Next.js & React)
+# ════════════════════════════════════════════════
+# Next.js build output and telemetry
+frontend/.next/
+.next/
+out/
+build/
+.vercel/
+
+# Next.js environment cache
+.eslintcache
+.tsbuildinfo
