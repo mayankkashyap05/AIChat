@@ -13,22 +13,23 @@ export default function ChatPage() {
   const chatHook = useChat();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/");
-    }
+    if (!loading && !user) router.push("/");
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (user) {
-      chatHook.fetchChats();
-    }
+    if (user) chatHook.fetchChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-chat-bg">
-        <div className="animate-pulse text-gray-400 text-lg">Loading...</div>
+      <div className="h-screen flex items-center justify-center bg-surface">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          <span className="text-text-secondary text-sm">
+            Loading workspace…
+          </span>
+        </div>
       </div>
     );
   }
@@ -36,7 +37,7 @@ export default function ChatPage() {
   if (!user) return null;
 
   return (
-    <div className="h-screen flex overflow-hidden">
+    <div className="h-screen flex overflow-hidden bg-surface">
       <Sidebar
         chats={chatHook.chats}
         activeChat={chatHook.activeChat}

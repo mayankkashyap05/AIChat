@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 interface MessageInputProps {
   onSend: (content: string) => void;
@@ -13,68 +13,99 @@ export default function MessageInput({ onSend, disabled }: MessageInputProps) {
 
   // Auto-resize textarea
   useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = Math.min(textarea.scrollHeight, 200) + "px";
-    }
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 220) + "px";
   }, [input]);
 
-  const handleSend = () => {
+  const handleSend = useCallback(() => {
     const trimmed = input.trim();
     if (!trimmed || disabled) return;
-
     onSend(trimmed);
     setInput("");
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
+  }, [input, disabled, onSend]);
 
-    // Reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
+  const canSend = !!input.trim() && !disabled;
+
   return (
-    <div className="border-t border-chat-border bg-chat-bg p-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-end gap-3 bg-chat-input rounded-xl border border-chat-border focus-within:border-gray-500 transition-colors px-4 py-3">
+    <div className="flex-shrink-0 border-t border-border bg-surface/80 backdrop-blur-sm px-4 py-4">
+      <div className="max-w-3xl mx-auto space-y-2">
+        {/* Main input container */}
+        <div className="relative bg-surface-1 border border-border hover:border-border-strong focus-within:border-accent/50 focus-within:shadow-glow-sm rounded-2xl transition-all duration-200">
+          {/* Textarea */}
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Send a message..."
+            placeholder={
+              disabled
+                ? "AI is responding…"
+                : "Message AI (Enter to send, Shift+Enter for newline)"
+            }
             disabled={disabled}
             rows={1}
-            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none text-sm leading-6 max-h-[200px]"
+            className="w-full bg-transparent text-text-primary placeholder-text-muted text-sm leading-6 outline-none resize-none px-4 pt-3.5 pb-3 max-h-[220px] disabled:cursor-not-allowed"
           />
-          <button
-            onClick={handleSend}
-            disabled={disabled || !input.trim()}
-            className={`p-1.5 rounded-lg transition-all ${
-              input.trim() && !disabled
-                ? "bg-teal-500 hover:bg-teal-600 text-white"
-                : "text-gray-600 cursor-not-allowed"
-            }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 19V5m0 0l-7 7m7-7l7 7"
-              />
-            </svg>
-          </button>
+
+          {/* Bottom bar */}
+          <div className="flex items-center justify-end px-3 pb-2.5">
+            {/* Character count hint */}
+            {input.length > 500 && (
+              <span
+                className={`text-xs mr-3 ${
+                  input.length > 3000 ? "text-red-400" : "text-text-muted"
+                }`}
+              >
+                {input.length.toLocaleString()}
+              </span>
+            )}
+
+            {/* Send button */}
+            <button
+              onClick={handleSend}
+              disabled={!canSend}
+              className={`flex items-center justify-center w-8 h-8 rounded-xl transition-all duration-150 focus-ring ${
+                canSend
+                  ? "bg-accent hover:bg-accent-hover text-white shadow-glow-sm"
+                  : "bg-surface-3 text-text-muted cursor-not-allowed"
+              }`}
+              title="Send (Enter)"
+            >
+              {disabled ? (
+                <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 12h14m-7-7l7 7-7 7"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
-        <p className="text-xs text-gray-600 text-center mt-2">
-          AI can make mistakes. Verify important information.
+
+        {/* Disclaimer */}
+        <p className="text-center text-xs text-text-muted">
+          AI can make mistakes · All data stays on your server · Shift+Enter
+          for newlines
         </p>
       </div>
     </div>

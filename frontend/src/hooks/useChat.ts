@@ -25,9 +25,11 @@ export function useChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const abortRef = useRef(false);
 
-  // Fetch all chats
+  // Ref so streaming callbacks always see the latest active chat
+  const activeChatRef = useRef<ChatItem | null>(null);
+  activeChatRef.current = activeChat;
+
   const fetchChats = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -40,7 +42,6 @@ export function useChat() {
     }
   }, []);
 
-  // Load messages for a chat
   const loadChat = useCallback(async (chat: ChatItem) => {
     try {
       setActiveChat(chat);
@@ -55,13 +56,13 @@ export function useChat() {
     }
   }, []);
 
-  // Create new chat
-  const createNewChat = useCallback(async () => {
+  const createNewChat = useCallback(async (): Promise<ChatItem | null> => {
     try {
       const data = await api.createChat();
-      const newChat = data.chat;
+      const newChat: ChatItem = data.chat;
       setChats((prev) => [newChat, ...prev]);
       setActiveChat(newChat);
+      activeChatRef.current = newChat;
       setMessages([]);
       return newChat;
     } catch (err: any) {
@@ -70,16 +71,15 @@ export function useChat() {
     }
   }, []);
 
-  // Send message (streaming)
+  // No model param — backend always uses its configured default
   const sendMessage = useCallback(
-    async (content: string, model?: string) => {
-      if (!activeChat || isSending) return;
+    async (content: string) => {
+      const chat = activeChatRef.current;
+      if (!chat || isSending) return;
 
       setIsSending(true);
       setError(null);
-      abortRef.current = false;
 
-      // Optimistic: add user message
       const tempUserMsg: MessageItem = {
         id: `temp-user-${Date.now()}`,
         role: "user",
@@ -88,7 +88,6 @@ export function useChat() {
       };
       setMessages((prev) => [...prev, tempUserMsg]);
 
-      // Placeholder for assistant message
       const tempAssistantId = `temp-assistant-${Date.now()}`;
       const tempAssistantMsg: MessageItem = {
         id: tempAssistantId,
@@ -100,24 +99,26 @@ export function useChat() {
 
       try {
         await api.sendMessageStream(
-          activeChat.id,
+          chat.id,
           content,
           // onChunk
           (chunk: string) => {
-            if (abortRef.current) return;
             setMessages((prev) =>
               prev.map((m) =>
-                m.id === tempAssistantId ? { ...m, content: m.content + chunk } : m
+                m.id === tempAssistantId
+                  ? { ...m, content: m.content + chunk }
+                  : m
               )
             );
           },
           // onDone
           (messageId: string) => {
             setMessages((prev) =>
-              prev.map((m) => (m.id === tempAssistantId ? { ...m, id: messageId } : m))
+              prev.map((m) =>
+                m.id === tempAssistantId ? { ...m, id: messageId } : m
+              )
             );
-            // Refresh chat list for title updates
-            fetchChats();
+            fetchChats(); // refresh list so auto-title appears
           },
           // onError
           (errorMsg: string) => {
@@ -125,12 +126,12 @@ export function useChat() {
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === tempAssistantId
-                  ? { ...m, content: "⚠️ Error: " + errorMsg }
+                  ? { ...m, content: `⚠️ ${errorMsg}` }
                   : m
               )
             );
-          },
-          model
+          }
+          // no model argument — backend uses DEFAULT_MODEL from .env
         );
       } catch (err: any) {
         setError(err.message);
@@ -138,43 +139,35 @@ export function useChat() {
         setIsSending(false);
       }
     },
-    [activeChat, isSending, fetchChats]
+    [isSending, fetchChats]
   );
 
-  // Rename chat
-  const renameChat = useCallback(
-    async (chatId: string, title: string) => {
-      try {
-        await api.updateChat(chatId, title);
-        setChats((prev) =>
-          prev.map((c) => (c.id === chatId ? { ...c, title } : c))
-        );
-        if (activeChat?.id === chatId) {
-          setActiveChat((prev) => (prev ? { ...prev, title } : null));
-        }
-      } catch (err: any) {
-        setError(err.message);
+  const renameChat = useCallback(async (chatId: string, title: string) => {
+    try {
+      await api.updateChat(chatId, title);
+      setChats((prev) =>
+        prev.map((c) => (c.id === chatId ? { ...c, title } : c))
+      );
+      if (activeChatRef.current?.id === chatId) {
+        setActiveChat((prev) => (prev ? { ...prev, title } : null));
       }
-    },
-    [activeChat]
-  );
+    } catch (err: any) {
+      setError(err.message);
+    }
+  }, []);
 
-  // Delete chat
-  const deleteChat = useCallback(
-    async (chatId: string) => {
-      try {
-        await api.deleteChat(chatId);
-        setChats((prev) => prev.filter((c) => c.id !== chatId));
-        if (activeChat?.id === chatId) {
-          setActiveChat(null);
-          setMessages([]);
-        }
-      } catch (err: any) {
-        setError(err.message);
+  const deleteChat = useCallback(async (chatId: string) => {
+    try {
+      await api.deleteChat(chatId);
+      setChats((prev) => prev.filter((c) => c.id !== chatId));
+      if (activeChatRef.current?.id === chatId) {
+        setActiveChat(null);
+        setMessages([]);
       }
-    },
-    [activeChat]
-  );
+    } catch (err: any) {
+      setError(err.message);
+    }
+  }, []);
 
   return {
     chats,

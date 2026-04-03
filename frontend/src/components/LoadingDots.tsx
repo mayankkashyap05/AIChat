@@ -2,10 +2,14 @@
 
 export default function LoadingDots() {
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce [animation-delay:-0.3s]" />
-      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce [animation-delay:-0.15s]" />
-      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" />
+    <div className="flex items-center gap-1" aria-label="Loading">
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="w-2 h-2 rounded-full bg-accent/60 animate-pulse"
+          style={{ animationDelay: `${i * 0.2}s` }}
+        />
+      ))}
     </div>
   );
 }
