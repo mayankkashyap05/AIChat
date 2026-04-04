@@ -1,494 +1,243 @@
-```markdown
-<div align="center">
+# AIChat 🤖
 
-<img src="https://img.shields.io/badge/AChat-AI%20Chat%20Application-7c6af7?style=for-the-badge&logoColor=white" alt="AChat" />
+> A full-stack, privacy-first AI chat application powered by local LLMs — no data leaves your server.
 
-<br />
-<br />
-
-<img src="https://img.shields.io/badge/Next.js-16.2-black?style=flat-square&logo=next.js&logoColor=white" />
-<img src="https://img.shields.io/badge/TypeScript-5.6-3178c6?style=flat-square&logo=typescript&logoColor=white" />
-<img src="https://img.shields.io/badge/Express.js-4.21-000000?style=flat-square&logo=express&logoColor=white" />
-<img src="https://img.shields.io/badge/PostgreSQL-18-336791?style=flat-square&logo=postgresql&logoColor=white" />
-<img src="https://img.shields.io/badge/Ollama-Local%20LLM-ff6b35?style=flat-square&logoColor=white" />
-<img src="https://img.shields.io/badge/LiteLLM-Proxy-7c6af7?style=flat-square&logoColor=white" />
-<img src="https://img.shields.io/badge/Tailwind%20CSS-3.4-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white" />
-<img src="https://img.shields.io/badge/AES--256--GCM-Encrypted-22c55e?style=flat-square&logo=shield&logoColor=white" />
-
-<br />
-<br />
-
-```
- █████╗  ██████╗██╗  ██╗ █████╗ ████████╗
-██╔══██╗██╔════╝██║  ██║██╔══██╗╚══██╔══╝
-███████║██║     ███████║███████║   ██║   
-██╔══██║██║     ██╔══██║██╔══██║   ██║   
-██║  ██║╚██████╗██║  ██║██║  ██║   ██║   
-╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝  
-```
-
-### **Private · Encrypted · Local AI Chat**
-*Chat with local LLMs. Your data never leaves your server.*
-
-<br />
-
-[**→ View Full Source Code**](./PROJECT-CODE.md) · [**→ Read Technical Report**](./PROJECT-REPORT.md) · [**→ Setup & Run Guide**](./RUN.md)
-
-</div>
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
+[![Express](https://img.shields.io/badge/Express-4.21-000000?style=flat-square&logo=express)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-4169E1?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
+[![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-FF6B35?style=flat-square)](https://ollama.ai/)
+[![License](https://img.shields.io/badge/License-MIT-22C55E?style=flat-square)](LICENSE)
 
 ---
 
-<br />
+## What is AIChat?
 
-## What is AChat?
-
-**AChat** is a self-hosted AI chat application that runs entirely on your own machine. It connects to locally running Large Language Models through [Ollama](https://ollama.com), routes them through a [LiteLLM](https://github.com/BerriAI/litellm) proxy, and stores all your conversations in a local [PostgreSQL](https://www.postgresql.org) database — **fully encrypted**.
-
-No cloud. No subscriptions. No data sent to third parties. Every message you send is encrypted with **AES-256-GCM** before it touches the database.
-
-<br />
+AIChat is a self-hosted, privacy-first conversational AI platform. It lets authenticated users have multi-turn conversations with locally hosted Large Language Models (LLMs). Every message is encrypted at rest using **AES-256-GCM** with per-user keys derived via **PBKDF2**, and no conversation data ever leaves your own infrastructure.
 
 ---
 
-## ✨ Core Features
+## ✨ Key Highlights
 
-<table>
-<tr>
-<td width="50%">
+| Pillar | What We Do |
+|---|---|
+| 🔒 **Privacy** | AES-256-GCM per-user encryption on every message at rest |
+| ⚡ **Performance** | SSE-based streaming for real-time token delivery |
+| 🛡️ **Security** | Google OAuth 2.0 + JWT, Helmet.js, three-tier rate limiting |
+| 🔄 **Flexibility** | LiteLLM proxy routes between llama3.2, llama3.1, mistral, gemma2 |
+| 💾 **Persistence** | PostgreSQL stores full chat history with soft-delete |
+| 🎨 **UX** | Next.js 16 + Tailwind CSS, markdown rendering, syntax highlighting |
 
-**🔒 End-to-End Encrypted Storage**
-Every message is encrypted with AES-256-GCM using a per-user key derived via PBKDF2 (100,000 iterations) before being written to PostgreSQL. Only you can decrypt your own conversations.
+---
 
-</td>
-<td width="50%">
+## 🗂️ Documentation
 
-**⚡ Real-Time Streaming**
-AI responses stream token-by-token using Server-Sent Events (SSE). A keepalive ping system prevents timeouts while Ollama is thinking — you see output the moment inference begins.
+This repository ships with dedicated documentation files. **Read these for full details:**
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+| Document | Description |
+|---|---|
+| 📋 **[PROJECT-REPORT.md](./PROJECT-REPORT.md)** | Full technical report — architecture, security, database design, API design, ER diagrams, DFD Level 0/1/2, data flow, performance analysis, and future scope |
+| 💻 **[PROJECT-CODE.md](./PROJECT-CODE.md)** | Complete annotated source code for every file in the project — frontend, backend, services, and configuration |
+| 🚀 **[RUN.md](./RUN.md)** | Step-by-step instructions to run the project in **development** and **production** modes, including environment setup and dependency installation |
 
-**🧠 Multiple Local Models**
-Switch between `llama3.2`, `llama3.1`, `mistral`, and `gemma2` — all running locally through Ollama. LiteLLM proxies all models under a single OpenAI-compatible endpoint.
-
-</td>
-<td width="50%">
-
-**💬 Persistent Chat History**
-All conversations are saved with full message history. Chats are grouped by date in the sidebar (Today / Yesterday / Last 7 Days / Older) and can be renamed or deleted.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**🔐 Google OAuth 2.0**
-Sign in with your Google account. Backend verifies the ID token server-side using the official Google Auth Library and issues a 7-day JWT — no passwords stored anywhere.
-
-</td>
-<td width="50%">
-
-**📝 Markdown + Syntax Highlighting**
-AI responses render full Markdown — headers, lists, blockquotes, tables, inline code — with syntax-highlighted code blocks powered by `react-syntax-highlighter` and a copy button per block.
-
-</td>
-</tr>
-</table>
-
-<br />
+> 💡 **New here?** Start with [`RUN.md`](./RUN.md) to get the app running, then read [`PROJECT-REPORT.md`](./PROJECT-REPORT.md) to understand how it all works.
 
 ---
 
 ## 🏗️ Architecture at a Glance
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Your Browser                            │
-│            Next.js 16  ·  React 18  ·  Tailwind             │
-│         Google OAuth  ·  SSE Streaming  ·  JWT Auth         │
-└─────────────────────────┬───────────────────────────────────┘
-                          │  HTTP / SSE (port 3000)
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  Express.js Backend                         │
-│                    TypeScript 5.6                           │
-│   JWT Auth  ·  Rate Limiting  ·  AES-256-GCM Encryption    │
-│         Helmet  ·  CORS  ·  Winston Logging                 │
-└──────────────┬──────────────────────────┬───────────────────┘
-               │                          │
-               ▼                          ▼
-┌──────────────────────┐    ┌─────────────────────────────────┐
-│     PostgreSQL 18    │    │          LiteLLM Proxy          │
-│                      │    │           (port 4001)           │
-│  users  ·  chats     │    │   OpenAI-compatible gateway     │
-│  messages  ·  models │    └─────────────────┬───────────────┘
-│  (encrypted content) │                      │
-└──────────────────────┘                      ▼
-                             ┌─────────────────────────────────┐
-                             │         Ollama Engine           │
-                             │          (port 11434)           │
-                             │  llama3.2  ·  llama3.1          │
-                             │  mistral   ·  gemma2            │
-                             └─────────────────────────────────┘
+Browser (Next.js :3000)
+        │
+        │  HTTP / SSE
+        ▼
+Express Backend (:4000)
+  ├── Google OAuth 2.0  →  JWT Auth
+  ├── AES-256-GCM Encryption
+  ├── Rate Limiting (3 tiers)
+  └── PostgreSQL (:5432)
+        │
+        │  OpenAI-compatible API
+        ▼
+LiteLLM Proxy (:4001)
+        │
+        ▼
+Ollama LLM Engine (:11434)
+  ├── llama3.2  (default)
+  ├── llama3.1
+  ├── mistral
+  └── gemma2
 ```
 
-<br />
+> See the full layered architecture diagram in [`PROJECT-REPORT.md → Section 3`](./PROJECT-REPORT.md#3-architecture-overview)
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
-| Layer | Technology | Version | Purpose |
-|---|---|---|---|
-| **Frontend** | Next.js | 16.2 | SSR, routing, API proxy rewrites |
-| **UI Library** | React | 18.3 | Component model, concurrent rendering |
-| **Styling** | Tailwind CSS | 3.4 | Utility-first dark-mode UI |
-| **Backend** | Express.js | 4.21 | REST API + SSE streaming server |
-| **Language** | TypeScript | 5.6 | Full-stack type safety |
-| **Database** | PostgreSQL | 18 | Persistent encrypted storage |
-| **Auth** | Google OAuth 2.0 + JWT | — | Passwordless authentication |
-| **Encryption** | AES-256-GCM + PBKDF2 | Node crypto | Message encryption at rest |
-| **AI Proxy** | LiteLLM | Latest | OpenAI-compatible model gateway |
-| **LLM Runtime** | Ollama | Latest | Local model inference |
-| **AI SDK** | OpenAI Node SDK | 4.67 | API client targeting LiteLLM |
-| **Markdown** | react-markdown | 9.0 | AI response rendering |
-| **Security** | Helmet + express-rate-limit | — | HTTP headers + DoS protection |
-| **Logging** | Winston | 3.14 | Structured JSON logging |
+### Frontend
+| | Package | Version |
+|---|---|---|
+| ⚛️ | Next.js + React | 16.2 / 18.3 |
+| 🎨 | Tailwind CSS | 3.4 |
+| 🔐 | @react-oauth/google | 0.12.1 |
+| 📝 | react-markdown + syntax-highlighter | 9.0.1 / 16.1.1 |
 
-<br />
+### Backend
+| | Package | Version |
+|---|---|---|
+| 🚂 | Express.js | 4.21 |
+| 🔑 | jsonwebtoken | 9.0.2 |
+| 🗄️ | node-postgres (pg) | 8.13 |
+| 🤖 | OpenAI Node SDK | 4.67.1 |
+| 🛡️ | Helmet + express-rate-limit | 7.1 / 7.4 |
+| 📋 | Winston | 3.14.2 |
+
+### Infrastructure
+| | Component | Role |
+|---|---|---|
+| 🐘 | PostgreSQL | Primary data store |
+| 🦙 | Ollama | Local LLM inference |
+| 🔀 | LiteLLM | OpenAI-compatible model proxy |
+| 🔑 | Google Cloud OAuth 2.0 | Identity provider |
+
+> Full dependency rationale in [`PROJECT-REPORT.md → Section 2`](./PROJECT-REPORT.md#2-technology-stack-deep-dive)
+
+---
+
+## 🔐 Security Overview
+
+- **Authentication** — Google OAuth 2.0 ID tokens verified server-side; JWT issued with 7-day expiry
+- **Encryption** — Every message encrypted with AES-256-GCM before database write; keys derived per-user via PBKDF2 (100,000 iterations)
+- **Transport** — CORS restricted to frontend origin; Helmet.js sets CSP, HSTS, X-Frame-Options
+- **Rate Limiting** — Three independent tiers: general (300/15 min), auth (30/15 min), messages (20/1 min)
+
+> Full security architecture, auth flow diagrams, and encryption lifecycle in [`PROJECT-REPORT.md → Section 4`](./PROJECT-REPORT.md#4-security-architecture)
+
+---
+
+## 🗄️ Database Design
+
+Four tables — `users`, `chats`, `messages`, `models` — with cascade deletes, composite indexes for fast sidebar queries, and automatic `updated_at` triggers.
+
+```
+USERS ──< CHATS ──< MESSAGES
+             └──── MODELS
+```
+
+> Full schema, column definitions, index strategy, and ER diagram in [`PROJECT-REPORT.md → Sections 5 & 9`](./PROJECT-REPORT.md#5-database-design)
+
+---
+
+## ⚡ Streaming API
+
+Messages are delivered via **Server-Sent Events (SSE)** for real-time token streaming:
+
+```
+POST /api/chats/:chatId/messages
+Content-Type: text/event-stream
+
+: ping
+data: {"content": "Hello"}
+data: {"content": " there"}
+data: {"done": true, "messageId": "<uuid>"}
+```
+
+> Full API reference and all endpoints in [`PROJECT-REPORT.md → Section 6`](./PROJECT-REPORT.md#6-api-design)
+
+---
+
+## 🚀 Quick Start
+
+**Prerequisites:** Node.js 18+, PostgreSQL, Ollama, LiteLLM, Google OAuth credentials
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/aichat.git
+cd aichat
+
+# Follow the full setup guide
+cat RUN.md
+```
+
+> 📖 **All environment variables, dependency installation, dev mode, and production build steps are in [`RUN.md`](./RUN.md)**
+
+---
+
+## 📊 Data Flow Diagrams
+
+The project includes full DFD documentation:
+
+| Diagram | Location |
+|---|---|
+| DFD Level 0 — Context Diagram | [`PROJECT-REPORT.md → Section 10`](./PROJECT-REPORT.md#10-dfd-level-0--context-diagram) |
+| DFD Level 1 — System Decomposition | [`PROJECT-REPORT.md → Section 11`](./PROJECT-REPORT.md#11-dfd-level-1--system-decomposition) |
+| DFD Level 2 — Process Decomposition | [`PROJECT-REPORT.md → Section 12`](./PROJECT-REPORT.md#12-dfd-level-2--process-decomposition) |
+| Component Interaction Map | [`PROJECT-REPORT.md → Section 14`](./PROJECT-REPORT.md#14-component-interaction-map) |
+
+---
+
+## 📈 Performance Notes
+
+- **Connection pooling** — pg Pool (max 20) eliminates per-request overhead
+- **Optimistic UI** — User messages appear instantly before server confirmation
+- **Context trimming** — Last 50 messages sent to LLM to prevent token overflow
+- **Composite indexes** — Sub-millisecond sidebar listing queries
+- **Keepalive pings** — 3-second SSE pings prevent proxy timeouts during inference
+
+> Full performance and scalability analysis in [`PROJECT-REPORT.md → Section 15`](./PROJECT-REPORT.md#15-performance--scalability)
+
+---
+
+## 🗺️ Roadmap
+
+```
+Priority 1 — Security    → httpOnly cookies, token revocation, key rotation
+Priority 2 — Features    → per-chat model selection, message search, file uploads
+Priority 3 — Infra       → Docker Compose, DB migrations, Prometheus metrics
+Priority 4 — UX          → mobile layout, dark/light toggle, regenerate response
+```
+
+> Full limitations and future scope in [`PROJECT-REPORT.md → Section 16`](./PROJECT-REPORT.md#16-limitations--future-scope)
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-AChat/
-│
-├── 📄 README.md                 ← You are here
-├── 📄 PROJECT-CODE.md           ← Complete source code of every file
-├── 📄 PROJECT-REPORT.md         ← Full technical report, ER diagram, DFD
-├── 📄 RUN.md                    ← Step-by-step dev & production run guide
-│
-├── ⚙️  litellm-config.yaml      ← LiteLLM model routing configuration
-│
-├── 🗄️  database/
-│   └── init.sql                 ← PostgreSQL schema (tables, indexes, triggers)
-│
-├── 🖥️  backend/
-│   ├── .env                     ← Backend environment variables
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── src/
-│       ├── index.ts             ← Express app entry point
-│       ├── config.ts            ← Centralised configuration
-│       ├── database.ts          ← PostgreSQL pool + all DB queries
-│       ├── middleware/
-│       │   ├── auth.ts          ← JWT verification middleware
-│       │   └── rateLimit.ts     ← Three-tier rate limiting
-│       ├── routes/
-│       │   ├── auth.ts          ← Google OAuth + JWT issuance
-│       │   ├── chats.ts         ← Chat CRUD routes
-│       │   └── messages.ts      ← Message send + SSE streaming
-│       └── services/
-│           ├── encryption.ts    ← AES-256-GCM encrypt/decrypt
-│           └── ai.ts            ← LiteLLM/Ollama integration
-│
-└── 🌐  frontend/
-    ├── .env.local               ← Frontend environment variables
-    ├── next.config.js           ← Next.js + API proxy rewrites
-    ├── tailwind.config.js       ← Custom design tokens
-    └── src/
-        ├── app/
-        │   ├── layout.tsx       ← Root layout + providers
-        │   ├── page.tsx         ← Landing / login page
-        │   └── chat/page.tsx    ← Main chat interface
-        ├── components/
-        │   ├── Sidebar.tsx      ← Chat list + user profile
-        │   ├── ChatWindow.tsx   ← Message area + scroll
-        │   ├── MessageBubble.tsx← Markdown rendering + copy
-        │   ├── MessageInput.tsx ← Auto-resize textarea + send
-        │   ├── LoginButton.tsx  ← Google OAuth button
-        │   └── LoadingDots.tsx  ← Animated loading indicator
-        ├── contexts/
-        │   └── AuthContext.tsx  ← Global auth state + localStorage
-        ├── hooks/
-        │   └── useChat.ts       ← All chat state management
-        └── lib/
-            └── api.ts           ← Typed API client singleton
+aichat/
+├── README.md              ← You are here
+├── RUN.md                 ← Dev & production run instructions
+├── PROJECT-REPORT.md      ← Full technical report
+├── PROJECT-CODE.md        ← Complete annotated source code
+├── backend/               ← Express.js API server (TypeScript)
+│   ├── src/
+│   │   ├── index.ts
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── middleware/
+│   └── package.json
+└── frontend/              ← Next.js application (TypeScript)
+    ├── src/
+    │   ├── app/
+    │   ├── components/
+    │   ├── context/
+    │   └── lib/
+    └── package.json
 ```
-
-<br />
 
 ---
 
-## ⚡ Quick Start
+## 📄 License
 
-> **Full detailed instructions with every command, error fix, and verification step are in [`RUN.md`](./RUN.md)**
-
-### Prerequisites
-
-You need these installed before anything else:
-
-```
-Node.js ≥ 18    →  node --version
-Python ≥ 3.10   →  python --version
-PostgreSQL 18   →  psql --version
-Ollama          →  ollama --version
-ngrok           →  ngrok version  (optional)
-```
-
-### Five Terminals, Five Commands
-
-Open **5 separate PowerShell windows** and run one command in each:
-
-```powershell
-# ── Terminal 1: Verify PostgreSQL is running ──────────────────────────
-Get-Service -Name "postgresql*"
-# If Stopped:  Start-Service -Name "postgresql-x64-18"
-```
-
-```powershell
-# ── Terminal 2: Start Ollama ──────────────────────────────────────────
-ollama serve
-```
-
-```powershell
-# ── Terminal 3: Start LiteLLM Proxy ──────────────────────────────────
-cd "C:\path\to\AChat"
-.\venv\Scripts\Activate
-litellm --config litellm-config.yaml --port 4001
-```
-
-```powershell
-# ── Terminal 4: Start Backend ─────────────────────────────────────────
-cd "C:\path\to\AChat\backend"
-npm install        # first time only
-npm run dev
-```
-
-```powershell
-# ── Terminal 5: Start Frontend ────────────────────────────────────────
-cd "C:\path\to\AChat\frontend"
-npm install        # first time only
-npm run dev
-```
-
-Then open **http://localhost:3000** in your browser.
-
-> **→ For the complete setup guide including database initialization, first-time model downloads, production builds, ngrok tunnel setup, health checks, and all error fixes — see [`RUN.md`](./RUN.md)**
-
-<br />
-
----
-
-## 🔐 Security Model
-
-```
-User Message Flow:
-  plaintext → PBKDF2 key derivation (100k iterations) →
-  AES-256-GCM encrypt (random IV per message) →
-  base64(IV ‖ AuthTag ‖ Ciphertext) → PostgreSQL
-
-  PostgreSQL → base64 decode → AES-256-GCM decrypt
-  (auth tag verified) → plaintext returned to caller
-```
-
-- **Per-user encryption keys** — derived from `ENCRYPTION_MASTER_SECRET` + user's Google ID
-- **Authenticated encryption** — GCM auth tag detects any tampering
-- **Random IV per message** — identical plaintexts produce different ciphertexts
-- **JWT authentication** — 7-day expiry, signed with `HS256`, verified on every protected request
-- **Rate limiting** — three tiers: general (300/15min), auth (30/15min), messages (20/min)
-- **Helmet.js** — sets `X-Frame-Options`, `X-Content-Type-Options`, HSTS, and more
-- **CORS** — locked to frontend origin only
-
-> **→ For full security architecture diagrams and encryption flow — see [`PROJECT-REPORT.md`](./PROJECT-REPORT.md)**
-
-<br />
-
----
-
-## 🗄️ Database Schema
-
-```
-users          chats              messages         models
-──────────     ──────────         ──────────       ──────────
-user_id (PK)   chat_id (PK)       message_id (PK)  model_id (PK)
-google_id      user_id (FK)  ──►  chat_id (FK) ──► name
-email          model_id (FK) ──►  role
-name           title              content          ← AES-256-GCM
-profile_pic    is_deleted         model_name           encrypted
-created_at     created_at         created_at
-updated_at     updated_at
-```
-
-- Cascade deletes: `users → chats → messages`
-- Soft delete on chats (`is_deleted = TRUE`)
-- Auto-updated `updated_at` via PostgreSQL triggers
-- Composite indexes optimized for sidebar listing and message retrieval
-
-> **→ For the full ER diagram, DFD Level 0, DFD Level 1, DFD Level 2, and complete schema documentation — see [`PROJECT-REPORT.md`](./PROJECT-REPORT.md)**
-
-<br />
-
----
-
-## 📡 API Reference
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/google` | ✗ | Verify Google token, issue JWT |
-| `GET` | `/api/auth/me` | ✓ | Get current user profile |
-| `GET` | `/api/chats` | ✓ | List all user chats |
-| `POST` | `/api/chats` | ✓ | Create new chat |
-| `PATCH` | `/api/chats/:id` | ✓ | Rename chat |
-| `DELETE` | `/api/chats/:id` | ✓ | Soft-delete chat |
-| `GET` | `/api/chats/:id/messages` | ✓ | Get decrypted messages |
-| `POST` | `/api/chats/:id/messages` | ✓ | Send message + get AI response (stream or JSON) |
-| `GET` | `/api/models` | ✓ | List available AI models |
-| `GET` | `/api/health` | ✗ | Database health check |
-
-**Streaming:** Pass `"stream": true` in the POST body to receive a `text/event-stream` response with real-time token chunks.
-
-<br />
-
----
-
-## 🌐 Service Ports
-
-| Service | Port | URL |
-|---|---|---|
-| **Frontend** (Next.js) | `3000` | http://localhost:3000 |
-| **Backend** (Express.js) | `4000` | http://localhost:4000 |
-| **LiteLLM Proxy** | `4001` | http://localhost:4001 |
-| **PostgreSQL** | `5432` | `postgresql://aichat:***@localhost:5432/aichat` |
-| **Ollama** | `11434` | http://localhost:11434 |
-| **Ngrok Dashboard** | `4040` | http://localhost:4040 |
-
-<br />
-
----
-
-## 📚 Documentation
-
-<table>
-<tr>
-<td align="center" width="33%">
-
-### [`PROJECT-CODE.md`](./PROJECT-CODE.md)
-
-Complete source code for every file in the project — backend, frontend, database schema, configuration files, and environment templates.
-
-**Read this if you want to:**
-understand exactly what each file does, review the implementation, or copy specific logic.
-
-</td>
-<td align="center" width="33%">
-
-### [`PROJECT-REPORT.md`](./PROJECT-REPORT.md)
-
-Full technical report including technology stack analysis, architecture diagrams, ER diagram, DFD Level 0, DFD Level 1, DFD Level 2, security architecture, API design, and performance notes.
-
-**Read this if you want to:**
-understand the system design, present the project, or study the data flows.
-
-</td>
-<td align="center" width="33%">
-
-### [`RUN.md`](./RUN.md)
-
-Step-by-step guide for every terminal command needed to run the project in both development and production modes — including first-time database setup, model downloads, ngrok tunnel, health checks, and all common error fixes.
-
-**Read this if you want to:**
-set up and run the project on your machine.
-
-</td>
-</tr>
-</table>
-
-<br />
-
----
-
-## 📋 Environment Variables
-
-### Backend (`backend/.env`)
-
-```env
-GOOGLE_CLIENT_ID=           # From Google Cloud Console
-GOOGLE_CLIENT_SECRET=       # From Google Cloud Console
-DATABASE_URL=               # postgresql://aichat:password@localhost:5432/aichat
-JWT_SECRET=                 # 64-char hex string
-BACKEND_PORT=4000
-FRONTEND_URL=               # http://localhost:3000
-LITELLM_BASE_URL=           # http://localhost:4001
-LITELLM_MASTER_KEY=         # Must match litellm-config.yaml master_key
-OLLAMA_HOST=                # http://localhost:11434
-DEFAULT_MODEL=              # ollama/llama3.2
-ENCRYPTION_MASTER_SECRET=   # 64-char hex — generate with node crypto
-```
-
-### Frontend (`frontend/.env.local`)
-
-```env
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=    # Same as backend GOOGLE_CLIENT_ID
-NEXT_PUBLIC_API_URL=             # http://localhost:4000
-```
-
-> **→ See [`RUN.md`](./RUN.md) for how to generate secrets and configure all values correctly.**
-
-<br />
-
----
-
-## 🖼️ Application Screens
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Landing Page (/)                          │
-│                                                             │
-│   🤖  AI Chat                                               │
-│                                                             │
-│   One AI for everything — code, analyze, create, and solve  │
-│                                                             │
-│         [ Sign in with Google ]                             │
-│                                                             │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │ 🔒 Encrypted │  │ ⚡ Streaming  │  │ 📅 Persistent│      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│              Chat Page (/chat)                               │
-│  ┌────────────────┬────────────────────────────────────┐    │
-│  │  AI Chat    ✏️  │                                    │    │
-│  ├────────────────│  How can I help you?               │    │
-│  │ 🔍 Search...   │                                    │    │
-│  ├────────────────│  ┌──────────────┐ ┌─────────────┐ │    │
-│  │ Today          │  │ 💡 Explain   │ │ 🐍 Write a  │ │    │
-│  │  Chat title    │  │    quantum   │ │    Python   │ │    │
-│  │  Chat title    │  │    computing │ │    function │ │    │
-│  ├────────────────│  └──────────────┘ └─────────────┘ │    │
-│  │ Yesterday      │                                    │    │
-│  │  Chat title    │  ┌──────────────────────────────┐  │    │
-│  ├────────────────│  │ Message AI (Enter to send)   │  │    │
-│  │ 👤 User Name   │  └──────────────────────────────┘  │    │
-│  └────────────────┴────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-<br />
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
 <div align="center">
 
-**Built with TypeScript · Powered by Ollama · Secured with AES-256-GCM**
+**Built with privacy in mind. Your conversations stay on your server.**
 
-<br />
-
-[`PROJECT-CODE.md`](./PROJECT-CODE.md) · [`PROJECT-REPORT.md`](./PROJECT-REPORT.md) · [`RUN.md`](./RUN.md)
+[📋 Report](./PROJECT-REPORT.md) · [💻 Code](./PROJECT-CODE.md) · [🚀 Run](./RUN.md)
 
 </div>
-```
