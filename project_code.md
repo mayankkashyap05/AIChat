@@ -181,8 +181,6 @@ CREATE TABLE chats (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_chats_user_id ON chats(user_id);
-CREATE INDEX idx_chats_created_at ON chats(created_at DESC);
 CREATE INDEX idx_chats_user_active ON chats(user_id, is_deleted, updated_at DESC);
 
 -- ─── Messages ──────────────────────────────────────────────
@@ -195,7 +193,6 @@ CREATE TABLE messages (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_messages_chat_id ON messages(chat_id);
 CREATE INDEX idx_messages_chat_created ON messages(chat_id, created_at ASC);
 
 -- ─── Updated_at trigger ────────────────────────────────────
@@ -308,7 +305,7 @@ export const config = {
 
 ```typescript
 // backend/src/database.ts
-import { Pool } from "pg";
+import { Pool, PoolClient } from "pg";
 import { config } from "./config";
 import { deriveUserKey, encryptMessage, decryptMessage } from "./services/encryption";
 
@@ -437,20 +434,14 @@ export interface DbMessage {
   message_id: string;
   chat_id: string;
   role: "system" | "user" | "assistant";
-  content: string;           // Always DECRYPTED when returned from these functions
+  content: string;
   model_name: string | null;
   created_at: Date;
 }
 
-/**
- * Retrieves all messages for a chat, decrypting content using the user's key.
- *
- * @param chatId   - The chat to fetch messages for
- * @param googleId - The owning user's Google ID (used to derive decryption key)
- */
 export async function getChatMessages(
   chatId: string,
-  googleId: string        // ← NEW PARAMETER
+  googleId: string
 ): Promise<DbMessage[]> {
   const result = await pool.query(
     "SELECT * FROM messages WHERE chat_id = $1 ORDER BY created_at ASC",
@@ -459,65 +450,85 @@ export async function getChatMessages(
 
   if (result.rows.length === 0) return [];
 
-  // Derive the user's unique decryption key
   const userKey = deriveUserKey(googleId);
 
-  // Decrypt every message
   return result.rows.map((row) => {
+    // Only attempt decryption if the value looks like a valid encrypted blob.
+    // Plain-text legacy messages are short or contain characters not in base64.
+    const looksEncrypted =
+      row.content &&
+      row.content.length >= 44 &&
+      /^[A-Za-z0-9+/]+=*$/.test(row.content);
+
+    if (!looksEncrypted) {
+      // Legacy plain-text message — return as-is
+      return row as DbMessage;
+    }
+
     try {
       return {
         ...row,
         content: decryptMessage(row.content, userKey),
-      };
+      } as DbMessage;
     } catch (err) {
-      // If decryption fails (e.g., legacy plain-text message), return as-is
-      // Remove this fallback after running the migration script
-      console.warn(`Failed to decrypt message ${row.message_id}, returning raw`);
-      return row;
+      // Decryption failed on something that looked encrypted.
+      // Log with message_id so it can be investigated, but do NOT
+      // return raw ciphertext — return a safe placeholder instead.
+      console.error(
+        `Decryption failed for message ${row.message_id}:`,
+        (err as Error).message
+      );
+      return {
+        ...row,
+        content: "[Message could not be decrypted]",
+      } as DbMessage;
     }
   });
 }
 
-/**
- * Saves a message, encrypting the content with the user's key.
- *
- * @param chatId    - The chat to save to
- * @param role      - 'user' | 'assistant' | 'system'
- * @param content   - Plain text content (will be encrypted before storage)
- * @param googleId  - The owning user's Google ID (used to derive encryption key)
- * @param modelName - Optional model name
- */
 export async function createMessage(
   chatId: string,
   role: "system" | "user" | "assistant",
   content: string,
-  googleId: string,       // ← NEW PARAMETER
+  googleId: string,
   modelName?: string
 ): Promise<DbMessage> {
-  // Derive the user's unique encryption key
   const userKey = deriveUserKey(googleId);
-
-  // Encrypt the content before storing
   const encryptedContent = encryptMessage(content, userKey);
 
-  const result = await pool.query(
-    `INSERT INTO messages (chat_id, role, content, model_name)
-     VALUES ($1, $2, $3, $4)
-     RETURNING *`,
-    [chatId, role, encryptedContent, modelName || null]
-  );
+  // Use a transaction so the message insert and chat timestamp update
+  // are atomic — if either fails, neither is committed.
+  const client: PoolClient = await pool.connect();
+  try {
+    await client.query("BEGIN");
 
-  // Touch the chat's updated_at
-  await pool.query(
-    "UPDATE chats SET updated_at = NOW() WHERE chat_id = $1",
-    [chatId]
-  );
+    const result = await client.query(
+      `INSERT INTO messages (chat_id, role, content, model_name)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [chatId, role, encryptedContent, modelName || null]
+    );
 
-  // Return with DECRYPTED content (so callers always get plain text)
-  return {
-    ...result.rows[0],
-    content, // original plain text
-  };
+    // Touch the chat's updated_at so sidebar ordering stays current.
+    // The trigger on chats fires on UPDATE and also sets updated_at = NOW(),
+    // but explicitly setting it here is harmless and makes intent clear.
+    await client.query(
+      "UPDATE chats SET updated_at = NOW() WHERE chat_id = $1",
+      [chatId]
+    );
+
+    await client.query("COMMIT");
+
+    return {
+      ...result.rows[0],
+      content, // return original plain text to callers
+    } as DbMessage;
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 // ─── Model queries ─────────────────────────────────────────────────────────────
@@ -700,18 +711,19 @@ function trimMessages(messages: ChatMessage[], maxCount: number): ChatMessage[] 
 ### `backend/src/routes/encryption.ts`
 
 ```typescript
+// backend/src/services/encryption.ts
 import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from "crypto";
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const ALGORITHM = "aes-256-gcm";
-const IV_LENGTH = 16;        // 128-bit IV for AES-GCM
-const TAG_LENGTH = 16;       // 128-bit authentication tag
-const KEY_LENGTH = 32;       // 256-bit key for AES-256
+const IV_LENGTH = 16;
+const TAG_LENGTH = 16;
+const KEY_LENGTH = 32;
 const PBKDF2_ITERATIONS = 100_000;
 const PBKDF2_DIGEST = "sha256";
-const SALT_PREFIX = "aichat-user-key-v1"; // version prefix for future key rotation
+const SALT_PREFIX = "aichat-user-key-v1";
 
-// ─── Master secret (from environment) ─────────────────────────────────────────
+// ─── Master secret ─────────────────────────────────────────────────────────────
 function getMasterSecret(): Buffer {
   const secret = process.env.ENCRYPTION_MASTER_SECRET;
   if (!secret || secret.length < 32) {
@@ -724,77 +736,31 @@ function getMasterSecret(): Buffer {
 }
 
 // ─── Key Derivation ────────────────────────────────────────────────────────────
-/**
- * Derives a unique 256-bit AES key for a specific user.
- *
- * The key is derived from:
- *   - The user's Google ID (unique per user, never changes)
- *   - The server's ENCRYPTION_MASTER_SECRET (secret, never stored in DB)
- *
- * This means:
- *   - Each user gets a completely different key
- *   - Without the master secret, you cannot derive any user's key
- *   - The server cannot decrypt messages without the master secret
- *
- * @param googleId - The user's stable Google ID (sub claim)
- * @returns 32-byte Buffer to use as AES-256 key
- */
 export function deriveUserKey(googleId: string): Buffer {
   const masterSecret = getMasterSecret();
-
-  // Salt = prefix + googleId (deterministic, unique per user)
   const salt = Buffer.from(`${SALT_PREFIX}:${googleId}`, "utf8");
-
   return pbkdf2Sync(
-    masterSecret,          // password (master secret)
-    salt,                  // salt (user-specific)
-    PBKDF2_ITERATIONS,     // iterations (slow = hard to brute force)
-    KEY_LENGTH,            // output key length
-    PBKDF2_DIGEST          // hash algorithm
+    masterSecret,
+    salt,
+    PBKDF2_ITERATIONS,
+    KEY_LENGTH,
+    PBKDF2_DIGEST
   );
 }
 
 // ─── Encryption ────────────────────────────────────────────────────────────────
-/**
- * Encrypts a plaintext message using AES-256-GCM.
- *
- * Output format (all concatenated, then base64 encoded):
- *   [ IV (16 bytes) ][ AuthTag (16 bytes) ][ Ciphertext (variable) ]
- *
- * The format is self-contained — everything needed to decrypt is in the string.
- *
- * @param plaintext - The message to encrypt
- * @param userKey   - 32-byte key derived from deriveUserKey()
- * @returns base64-encoded encrypted string
- */
 export function encryptMessage(plaintext: string, userKey: Buffer): string {
-  // Random IV — NEVER reuse an IV with the same key
   const iv = randomBytes(IV_LENGTH);
-
   const cipher = createCipheriv(ALGORITHM, userKey, iv);
-
-  // Encrypt
   const encryptedPart1 = cipher.update(plaintext, "utf8");
   const encryptedPart2 = cipher.final();
   const ciphertext = Buffer.concat([encryptedPart1, encryptedPart2]);
-
-  // Get the GCM authentication tag (detects tampering)
   const authTag = cipher.getAuthTag();
-
-  // Pack: IV + AuthTag + Ciphertext → base64
   const packed = Buffer.concat([iv, authTag, ciphertext]);
   return packed.toString("base64");
 }
 
 // ─── Decryption ────────────────────────────────────────────────────────────────
-/**
- * Decrypts a message encrypted with encryptMessage().
- *
- * @param encryptedData - base64 string from encryptMessage()
- * @param userKey       - same 32-byte key used for encryption
- * @returns decrypted plaintext string
- * @throws if data is tampered, corrupted, or wrong key is used
- */
 export function decryptMessage(encryptedData: string, userKey: Buffer): string {
   let packed: Buffer;
 
@@ -804,12 +770,10 @@ export function decryptMessage(encryptedData: string, userKey: Buffer): string {
     throw new Error("Invalid encrypted data: not valid base64");
   }
 
-  // Minimum size check: IV + Tag must be present
   if (packed.length < IV_LENGTH + TAG_LENGTH) {
     throw new Error("Invalid encrypted data: too short");
   }
 
-  // Unpack
   const iv = packed.slice(0, IV_LENGTH);
   const authTag = packed.slice(IV_LENGTH, IV_LENGTH + TAG_LENGTH);
   const ciphertext = packed.slice(IV_LENGTH + TAG_LENGTH);
@@ -822,26 +786,16 @@ export function decryptMessage(encryptedData: string, userKey: Buffer): string {
     const decryptedPart2 = decipher.final();
     return Buffer.concat([decryptedPart1, decryptedPart2]).toString("utf8");
   } catch {
-    // GCM auth tag mismatch = data was tampered or wrong key
     throw new Error("Decryption failed: data may be tampered or key is incorrect");
   }
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
-/**
- * Checks if a string looks like an encrypted message (base64, minimum length).
- * Used to safely handle mixed legacy/encrypted data during migrations.
- */
 export function isEncrypted(value: string): boolean {
-  if (!value || value.length < 44) return false; // min base64 for IV+Tag
-  // Valid base64 pattern
+  if (!value || value.length < 44) return false;
   return /^[A-Za-z0-9+/]+=*$/.test(value);
 }
 
-/**
- * Encrypts text only if it isn't already encrypted.
- * Useful during migration of existing plain-text messages.
- */
 export function encryptIfNeeded(plaintext: string, userKey: Buffer): string {
   if (isEncrypted(plaintext)) return plaintext;
   return encryptMessage(plaintext, userKey);
@@ -851,11 +805,12 @@ export function encryptIfNeeded(plaintext: string, userKey: Buffer): string {
 ### `backend/src/routes/auth.ts`
 
 ```typescript
+// backend/src/routes/auth.ts
 import { Router, Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import { config } from "../config";
-import { findUserByGoogleId, createUser } from "../database";
+import { findUserByGoogleId, createUser, pool } from "../database";
 import { authLimiter } from "../middleware/rateLimit";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
 
@@ -863,7 +818,6 @@ const router = Router();
 const googleClient = new OAuth2Client(config.googleClientId);
 
 // POST /api/auth/google
-// Body: { credential: string } — the Google ID token from GIS
 router.post("/google", authLimiter, async (req: Request, res: Response) => {
   try {
     const { credential } = req.body;
@@ -873,7 +827,6 @@ router.post("/google", authLimiter, async (req: Request, res: Response) => {
       return;
     }
 
-    // Verify Google ID token
     const ticket = await googleClient.verifyIdToken({
       idToken: credential,
       audience: config.googleClientId,
@@ -892,10 +845,8 @@ router.post("/google", authLimiter, async (req: Request, res: Response) => {
       return;
     }
 
-    // Upsert user
     const user = await createUser(googleId, email, name, picture || null);
 
-    // Create JWT
     const token = jwt.sign(
       {
         userId: user.user_id,
@@ -921,7 +872,7 @@ router.post("/google", authLimiter, async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/auth/me — get current user from JWT
+// GET /api/auth/me
 router.get("/me", authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
@@ -929,14 +880,11 @@ router.get("/me", authMiddleware, async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const user = await findUserByGoogleId(""); // We'll find by userId instead
-    // Actually, let's query by user_id from the JWT
-    const { Pool } = require("pg");
-    const { pool } = require("../database");
-
-    const result = await pool.query("SELECT * FROM users WHERE user_id = $1", [
-      req.user.userId,
-    ]);
+    // Use the already-imported pool directly — no dynamic require needed
+    const result = await pool.query(
+      "SELECT * FROM users WHERE user_id = $1",
+      [req.user.userId]
+    );
 
     if (result.rows.length === 0) {
       res.status(404).json({ error: "User not found" });

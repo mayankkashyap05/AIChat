@@ -1,5 +1,5 @@
 // backend/src/database.ts
-import { Pool } from "pg";
+import { Pool, PoolClient } from "pg";
 import { config } from "./config";
 import { deriveUserKey, encryptMessage, decryptMessage } from "./services/encryption";
 
@@ -128,20 +128,14 @@ export interface DbMessage {
   message_id: string;
   chat_id: string;
   role: "system" | "user" | "assistant";
-  content: string;           // Always DECRYPTED when returned from these functions
+  content: string;
   model_name: string | null;
   created_at: Date;
 }
 
-/**
- * Retrieves all messages for a chat, decrypting content using the user's key.
- *
- * @param chatId   - The chat to fetch messages for
- * @param googleId - The owning user's Google ID (used to derive decryption key)
- */
 export async function getChatMessages(
   chatId: string,
-  googleId: string        // ← NEW PARAMETER
+  googleId: string
 ): Promise<DbMessage[]> {
   const result = await pool.query(
     "SELECT * FROM messages WHERE chat_id = $1 ORDER BY created_at ASC",
@@ -150,65 +144,85 @@ export async function getChatMessages(
 
   if (result.rows.length === 0) return [];
 
-  // Derive the user's unique decryption key
   const userKey = deriveUserKey(googleId);
 
-  // Decrypt every message
   return result.rows.map((row) => {
+    // Only attempt decryption if the value looks like a valid encrypted blob.
+    // Plain-text legacy messages are short or contain characters not in base64.
+    const looksEncrypted =
+      row.content &&
+      row.content.length >= 44 &&
+      /^[A-Za-z0-9+/]+=*$/.test(row.content);
+
+    if (!looksEncrypted) {
+      // Legacy plain-text message — return as-is
+      return row as DbMessage;
+    }
+
     try {
       return {
         ...row,
         content: decryptMessage(row.content, userKey),
-      };
+      } as DbMessage;
     } catch (err) {
-      // If decryption fails (e.g., legacy plain-text message), return as-is
-      // Remove this fallback after running the migration script
-      console.warn(`Failed to decrypt message ${row.message_id}, returning raw`);
-      return row;
+      // Decryption failed on something that looked encrypted.
+      // Log with message_id so it can be investigated, but do NOT
+      // return raw ciphertext — return a safe placeholder instead.
+      console.error(
+        `Decryption failed for message ${row.message_id}:`,
+        (err as Error).message
+      );
+      return {
+        ...row,
+        content: "[Message could not be decrypted]",
+      } as DbMessage;
     }
   });
 }
 
-/**
- * Saves a message, encrypting the content with the user's key.
- *
- * @param chatId    - The chat to save to
- * @param role      - 'user' | 'assistant' | 'system'
- * @param content   - Plain text content (will be encrypted before storage)
- * @param googleId  - The owning user's Google ID (used to derive encryption key)
- * @param modelName - Optional model name
- */
 export async function createMessage(
   chatId: string,
   role: "system" | "user" | "assistant",
   content: string,
-  googleId: string,       // ← NEW PARAMETER
+  googleId: string,
   modelName?: string
 ): Promise<DbMessage> {
-  // Derive the user's unique encryption key
   const userKey = deriveUserKey(googleId);
-
-  // Encrypt the content before storing
   const encryptedContent = encryptMessage(content, userKey);
 
-  const result = await pool.query(
-    `INSERT INTO messages (chat_id, role, content, model_name)
-     VALUES ($1, $2, $3, $4)
-     RETURNING *`,
-    [chatId, role, encryptedContent, modelName || null]
-  );
+  // Use a transaction so the message insert and chat timestamp update
+  // are atomic — if either fails, neither is committed.
+  const client: PoolClient = await pool.connect();
+  try {
+    await client.query("BEGIN");
 
-  // Touch the chat's updated_at
-  await pool.query(
-    "UPDATE chats SET updated_at = NOW() WHERE chat_id = $1",
-    [chatId]
-  );
+    const result = await client.query(
+      `INSERT INTO messages (chat_id, role, content, model_name)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [chatId, role, encryptedContent, modelName || null]
+    );
 
-  // Return with DECRYPTED content (so callers always get plain text)
-  return {
-    ...result.rows[0],
-    content, // original plain text
-  };
+    // Touch the chat's updated_at so sidebar ordering stays current.
+    // The trigger on chats fires on UPDATE and also sets updated_at = NOW(),
+    // but explicitly setting it here is harmless and makes intent clear.
+    await client.query(
+      "UPDATE chats SET updated_at = NOW() WHERE chat_id = $1",
+      [chatId]
+    );
+
+    await client.query("COMMIT");
+
+    return {
+      ...result.rows[0],
+      content, // return original plain text to callers
+    } as DbMessage;
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 // ─── Model queries ─────────────────────────────────────────────────────────────

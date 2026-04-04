@@ -44,8 +44,6 @@ CREATE TABLE chats (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_chats_user_id ON chats(user_id);
-CREATE INDEX idx_chats_created_at ON chats(created_at DESC);
 CREATE INDEX idx_chats_user_active ON chats(user_id, is_deleted, updated_at DESC);
 
 -- ─── Messages ──────────────────────────────────────────────
@@ -58,7 +56,6 @@ CREATE TABLE messages (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_messages_chat_id ON messages(chat_id);
 CREATE INDEX idx_messages_chat_created ON messages(chat_id, created_at ASC);
 
 -- ─── Updated_at trigger ────────────────────────────────────
