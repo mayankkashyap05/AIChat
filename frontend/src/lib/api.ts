@@ -1,4 +1,8 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+// Change this line:
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+// To this:
+const API_URL = "";
 
 class ApiClient {
   private token: string | null = null;

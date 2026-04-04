@@ -103,11 +103,22 @@ router.post(
         res.setHeader("Connection", "keep-alive");
         res.setHeader("X-Accel-Buffering", "no");
 
+        // 1. Force headers to send immediately to open the tunnel
+        res.flushHeaders();
+
+        // 2. Keep the connection alive while Ollama is "thinking"
+        const keepAlive = setInterval(() => {
+          res.write(": ping\n\n"); // Invisible SSE comment
+        }, 3000);
+
         try {
           const stream = await getAIResponseStream(contextMessages, model);
           let fullResponse = "";
 
           for await (const chunk of stream) {
+            // Stop pinging once the AI starts talking
+            clearInterval(keepAlive);
+            
             fullResponse += chunk;
             res.write(`data: ${JSON.stringify({ content: chunk })}\n\n`);
           }
@@ -117,7 +128,7 @@ router.post(
             req.params.chatId,
             "assistant",
             fullResponse,
-            googleId,    // ← pass googleId
+            googleId,
             model
           );
 
@@ -134,6 +145,7 @@ router.post(
           );
           res.end();
         } catch (aiError: any) {
+          clearInterval(keepAlive); // Stop pinging on error
           res.write(
             `data: ${JSON.stringify({
               error: aiError.message || "AI request failed",

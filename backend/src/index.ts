@@ -20,6 +20,9 @@ export const logger = winston.createLogger({
 // ─── Express App ───────────────────────────────────────────
 const app = express();
 
+// Trust the proxy (Ngrok/Next.js) so rate-limiting works correctly
+app.set("trust proxy", 1);
+
 // Security
 app.use(
   helmet({
