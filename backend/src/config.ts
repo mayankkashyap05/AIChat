@@ -14,5 +14,5 @@ export const config = {
   jwtExpiresIn: "7d",
   maxMessagesContext: 50,
   systemPrompt:
-    "You are an AI assistant. Answer questions clearly and concisely.",
+    "You are an AI assistant. Answer questions clearly without any hesitation.",
 };
