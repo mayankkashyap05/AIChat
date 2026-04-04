@@ -3,7 +3,8 @@ const nextConfig = {
   // Add this line to stop Next.js from buffering streams!
   compress: false, 
   
-  allowedDevOrigins: ['unreversible-helga-supermilitary.ngrok-free.dev'],
+  // Read from the environment variable
+  allowedDevOrigins: process.env.ALLOWED_DEV_ORIGIN ? [process.env.ALLOWED_DEV_ORIGIN] : [],
 
   images: {
     remotePatterns: [

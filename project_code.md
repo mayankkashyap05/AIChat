@@ -1193,11 +1193,22 @@ router.post(
         res.setHeader("Connection", "keep-alive");
         res.setHeader("X-Accel-Buffering", "no");
 
+        // 1. Force headers to send immediately to open the tunnel
+        res.flushHeaders();
+
+        // 2. Keep the connection alive while Ollama is "thinking"
+        const keepAlive = setInterval(() => {
+          res.write(": ping\n\n"); // Invisible SSE comment
+        }, 3000);
+
         try {
           const stream = await getAIResponseStream(contextMessages, model);
           let fullResponse = "";
 
           for await (const chunk of stream) {
+            // Stop pinging once the AI starts talking
+            clearInterval(keepAlive);
+            
             fullResponse += chunk;
             res.write(`data: ${JSON.stringify({ content: chunk })}\n\n`);
           }
@@ -1207,7 +1218,7 @@ router.post(
             req.params.chatId,
             "assistant",
             fullResponse,
-            googleId,    // ← pass googleId
+            googleId,
             model
           );
 
@@ -1224,6 +1235,7 @@ router.post(
           );
           res.end();
         } catch (aiError: any) {
+          clearInterval(keepAlive); // Stop pinging on error
           res.write(
             `data: ${JSON.stringify({
               error: aiError.message || "AI request failed",
@@ -1320,6 +1332,9 @@ export const logger = winston.createLogger({
 
 // ─── Express App ───────────────────────────────────────────
 const app = express();
+
+// Trust the proxy (Ngrok/Next.js) so rate-limiting works correctly
+app.set("trust proxy", 1);
 
 // Security
 app.use(
@@ -1472,6 +1487,12 @@ export default app;
 ```javascript
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Add this line to stop Next.js from buffering streams!
+  compress: false, 
+  
+  // Read from the environment variable
+  allowedDevOrigins: process.env.ALLOWED_DEV_ORIGIN ? [process.env.ALLOWED_DEV_ORIGIN] : [],
+
   images: {
     remotePatterns: [
       {
@@ -1484,6 +1505,14 @@ const nextConfig = {
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:4000/api/:path*'
+      }
+    ]
+  }
 };
 
 module.exports = nextConfig;
@@ -1861,7 +1890,11 @@ body {
 ### `frontend/src/lib/api.ts`
 
 ```typescript
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+// Change this line:
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+// To this:
+const API_URL = "";
 
 class ApiClient {
   private token: string | null = null;
