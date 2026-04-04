@@ -1,4 +1,4 @@
-# AChat – Complete Professional Development & Production Run Guide
+# AIChat – Complete Professional Development & Production Run Guide
 
 ## (Windows PowerShell | No Docker | Existing Features Only)
 
@@ -835,7 +835,7 @@ Start-Process "http://127.0.0.1:4040"
 # ══════════════════════════════════════════════════════
 
 Write-Host "`n=============================================" -ForegroundColor Cyan
-Write-Host "   AChat Full System Health Check" -ForegroundColor Cyan
+Write-Host "   AIChat Full System Health Check" -ForegroundColor Cyan
 Write-Host "=============================================`n" -ForegroundColor Cyan
 
 # ── 1. PostgreSQL Service ──────────────────────────────
@@ -1467,7 +1467,7 @@ Write-Host "All application ports cleared."
 
 ```
 ╔═══════════════════════════════════════════════════════════════════════════╗
-║                    AChat – QUICK REFERENCE CHEAT SHEET                    ║
+║                    AIChat – QUICK REFERENCE CHEAT SHEET                    ║
 ╠═══════════════════════════════════════════════════════════════════════════╣
 ║                                                                           ║
 ║  OPEN 5 POWERSHELL WINDOWS AND RUN IN ORDER:                             ║

@@ -1,4 +1,4 @@
-# AChat – Comprehensive Technical Report
+# AIChat – Comprehensive Technical Report
 
 ---
 
@@ -25,7 +25,7 @@
 
 ## 1. Executive Summary
 
-**AChat** is a full-stack, privacy-first AI chat application that runs entirely on local infrastructure. It enables authenticated users to have multi-turn conversations with locally hosted Large Language Models (LLMs), with all message data stored in encrypted form in a relational database. No conversation data leaves the user's own server.
+**AIChat** is a full-stack, privacy-first AI chat application that runs entirely on local infrastructure. It enables authenticated users to have multi-turn conversations with locally hosted Large Language Models (LLMs), with all message data stored in encrypted form in a relational database. No conversation data leaves the user's own server.
 
 ### Core Value Propositions
 
@@ -675,7 +675,7 @@ Send to LiteLLM → Ollama
 ```
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                        ENTITY-RELATIONSHIP DIAGRAM                        ║
-║                               AChat Database                              ║
+║                               AIChat Database                              ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
 ┌─────────────────────────────────┐
@@ -750,7 +750,7 @@ INDEXES:
 ```
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                    DFD LEVEL 0 – CONTEXT DIAGRAM                          ║
-║                         AChat System                                       ╚═══════════════════════════════════════════════════════════════════════════╝
+║                         AIChat System                                       ╚═══════════════════════════════════════════════════════════════════════════╝
 
 
                     ┌─────────────────┐
@@ -768,7 +768,7 @@ INDEXES:
          ▼                   ▼                   │
 ╔════════════════════════════════════════════╗   │
 ║                                            ║   │
-║           AChat Application System         ║───┘
+║           AIChat Application System         ║───┘
 ║                                            ║
 ║   (Next.js Frontend + Express Backend      ║
 ║    + PostgreSQL + LiteLLM + Ollama)        ║

@@ -2,7 +2,7 @@
 ## Project Structure
 
 ```
-AChat/
+AIChat/
 ├── litellm-config.yaml
 ├── database/
 │   └── init.sql
