@@ -1,6 +1,6 @@
 # AIChat 🤖
 
-> A full-stack, privacy-first AI chat application powered by local LLMs — no data leaves your server.
+> A full-stack, privacy-first AI chat application powered by LLMs — no data leaves our server.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
@@ -13,7 +13,7 @@
 
 ## What is AIChat?
 
-AIChat is a self-hosted, privacy-first conversational AI platform. It lets authenticated users have multi-turn conversations with locally hosted Large Language Models (LLMs). Every message is encrypted at rest using **AES-256-GCM** with per-user keys derived via **PBKDF2**, and no conversation data ever leaves your own infrastructure.
+AIChat is a privacy-first conversational AI platform. It lets authenticated users have multi-turn conversations with locally hosted Large Language Models (LLMs). Every message is encrypted at rest using **AES-256-GCM** with per-user keys derived via **PBKDF2**, and no conversation data ever leaves your own infrastructure.
 
 ---
 
