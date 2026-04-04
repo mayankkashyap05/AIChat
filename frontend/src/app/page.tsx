@@ -13,8 +13,8 @@ const FEATURES = [
           d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
       </svg>
     ),
-    title: "Private by default",
-    desc: "Every request stays on your server. Zero telemetry, zero cloud.",
+    title: "End-to-end encrypted",
+    desc: "All data are encrypted. Only you can read your conversations.",
   },
   {
     icon: (
@@ -24,7 +24,7 @@ const FEATURES = [
       </svg>
     ),
     title: "Streaming responses",
-    desc: "Tokens render in real-time with GPU-accelerated local inference.",
+    desc: "Tokens render in real-time with GPU-accelerated inference.",
   },
   {
     icon: (
@@ -43,8 +43,8 @@ const FEATURES = [
           d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
       </svg>
     ),
-    title: "Multiple models",
-    desc: "Switch between Llama 3, Mistral, Gemma and more in every chat.",
+    title: "Multiple domain capabilities",
+    desc: "Excels across coding, finance, research, content creation, and real-world problem solving.",
   },
 ];
 
@@ -116,9 +116,9 @@ export default function HomePage() {
               </span>
             </h1>
             <p className="text-text-secondary text-lg max-w-md mx-auto leading-relaxed">
-              A private, self-hosted AI assistant powered by local models.
+              One AI for everything — code, analyze, create, and solve.
               <br />
-              Fast, secure, and entirely under your control.
+              Lightning-fast, secure, and always improving.
             </p>
           </div>
 
@@ -128,7 +128,7 @@ export default function HomePage() {
           </div>
 
           <p className="text-text-muted text-xs">
-            Sign in with Google · Your data never leaves your server
+            Sign in with Google · Your data never leaves our server
           </p>
         </div>
 
