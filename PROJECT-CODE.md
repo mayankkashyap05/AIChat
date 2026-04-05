@@ -1617,11 +1617,23 @@ html {
   text-size-adjust: 100%;
 }
 
+/*
+ * Body has two modes:
+ *  • Login page  → needs overflow-y: auto so the page can scroll on
+ *                  short / landscape screens.
+ *  • Chat page   → the .chat-layout container locks overflow itself;
+ *                  body scroll is irrelevant there.
+ *
+ * We set overflow-x: hidden always (nothing should spill sideways)
+ * and overflow-y: auto so the login page works on every device.
+ * The chat page is self-contained inside .chat-layout which sets
+ * its own overflow: hidden.
+ */
 body {
-  height: 100%;
   min-height: 100%;
   min-height: -webkit-fill-available;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: #0f0f10;
   color: #f0f0f2;
   font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -1629,11 +1641,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+ * #__next must stretch to fill the viewport so the login page
+ * background covers the screen even when content is shorter than
+ * the viewport height.  height: auto + min-height lets it grow
+ * beyond the viewport when content is taller (login page on small
+ * screens) while still filling the viewport when shorter (chat page).
+ */
 #__next {
-  height: 100%;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+  height: auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* ─── Scrollbars ─────────────────────────────────── */
@@ -1900,22 +1921,34 @@ button,
 }
 
 /* ─── Chat layout root ───────────────────────────── */
+/*
+ * The chat page lives entirely inside .chat-layout.
+ * We lock it to the full viewport so nothing outside it scrolls.
+ * 100dvh uses the "dynamic" viewport height on mobile browsers
+ * (excludes the address-bar chrome) and falls back to 100vh.
+ */
 .chat-layout {
   display: flex;
   width: 100%;
-  height: 100%;
+  /* dvh is supported in all modern browsers; 100vh is the safe fallback */
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   overflow: hidden;
   position: relative;
 }
 
 /* ─── Messages scroll container ─────────────────── */
 /*
- * Critical: this is the ONLY element that scrolls vertically.
- * - overflow-y: auto  (not scroll, to hide bar when not needed)
- * - -webkit-overflow-scrolling: touch  → iOS momentum / inertia
- * - overscroll-behavior-y: contain     → no scroll chaining to body
- * - touch-action: pan-y               → allow vertical finger pan
- * - min-height: 0                     → flex child must shrink past content
+ * Critical: this is the ONLY element that scrolls vertically inside
+ * the chat layout.
+ *  - overflow-y: auto                → hide bar when not needed
+ *  - -webkit-overflow-scrolling: touch → iOS momentum / inertia
+ *  - overscroll-behavior-y: contain  → no scroll chaining to body
+ *  - touch-action: pan-y             → allow vertical finger pan
+ *  - min-height: 0                   → flex child must shrink past content
+ *  - flex: 1 1 0%                    → take all remaining vertical space
  */
 .messages-scroll {
   overflow-y: auto;
@@ -2058,6 +2091,56 @@ button,
   margin-top: 0.35rem;
   line-height: 1.4;
   user-select: none;
+}
+
+/* ─── Login page — safe-area bottom padding ──────── */
+/*
+ * The login <main> uses overflow-y: auto (set inline in page.tsx).
+ * On devices with a home indicator (iPhone X+) we need to ensure
+ * the last piece of content is not hidden behind it.
+ */
+.login-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ─── Landscape / very short viewport ───────────────
+ * On phones rotated to landscape the viewport height can drop to
+ * ~320–380 px.  Reduce vertical gaps so the hero + login button
+ * remain fully visible without scrolling when possible.
+ * ──────────────────────────────────────────────────── */
+@media (max-height: 480px) {
+  /*
+   * Tighten the spacing inside the hero section.
+   * These selectors target the inline-style gap values set in
+   * page.tsx via the style prop; we override with !important so
+   * the media query wins over the inline style.
+   */
+  .login-hero > .login-logo {
+    width: clamp(40px, 8vw, 56px)  !important;
+    height: clamp(40px, 8vw, 56px) !important;
+  }
+}
+
+/* ─── Ultra-narrow screens (< 360 px wide) ──────────
+ * Prevent horizontal overflow on very old / small handsets.
+ * ──────────────────────────────────────────────────── */
+@media (max-width: 359px) {
+  /*
+   * Scale down the Google sign-in button container slightly so it
+   * never bleeds off the right edge on 320-px screens.
+   */
+  .google-btn-wrapper {
+    transform: scale(0.88);
+    transform-origin: center top;
+  }
+
+  /* Shrink feature card text a touch more */
+  .feature-card-title {
+    font-size: 0.7rem !important;
+  }
+  .feature-card-desc {
+    font-size: 0.625rem !important;
+  }
 }
 
 /* ─── Keyframes ──────────────────────────────────── */
@@ -2651,58 +2734,90 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen w-full flex flex-col items-center justify-center bg-surface relative overflow-x-hidden overflow-y-auto">
-      {/* Ambient blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+    <main
+      className="w-full flex flex-col items-center justify-start bg-surface relative"
+      style={{
+        minHeight: "100dvh",
+        overflowX: "hidden",
+        overflowY: "auto",
+        WebkitOverflowScrolling: "touch",
+      } as React.CSSProperties}
+    >
+      {/* Ambient blobs — clipped so they never cause horizontal scroll */}
+      <div
+        className="fixed inset-0 pointer-events-none overflow-hidden"
+        aria-hidden
+        style={{ zIndex: 0 }}
+      >
         <div
-          className="absolute rounded-full bg-accent/5 blur-[100px]"
+          className="absolute rounded-full bg-accent/5 blur-[80px]"
           style={{
-            width:  "clamp(200px, 50vw, 600px)",
-            height: "clamp(200px, 50vw, 600px)",
-            top:    "-15%",
-            left:   "-10%",
+            width:  "clamp(160px, 45vw, 500px)",
+            height: "clamp(160px, 45vw, 500px)",
+            top:    "-10%",
+            left:   "-8%",
           }}
         />
         <div
-          className="absolute rounded-full bg-blue-500/5 blur-[100px]"
+          className="absolute rounded-full bg-blue-500/5 blur-[80px]"
           style={{
-            width:  "clamp(180px, 45vw, 500px)",
-            height: "clamp(180px, 45vw, 500px)",
-            bottom: "-15%",
-            right:  "-10%",
+            width:  "clamp(140px, 40vw, 420px)",
+            height: "clamp(140px, 40vw, 420px)",
+            bottom: "-10%",
+            right:  "-8%",
           }}
         />
       </div>
 
-      {/* Grid overlay */}
+      {/* Grid overlay — fixed so it covers viewport regardless of scroll */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.018]"
+        className="fixed inset-0 pointer-events-none opacity-[0.018]"
         aria-hidden
         style={{
+          zIndex: 0,
           backgroundImage:
             "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)",
-          backgroundSize: "clamp(32px, 5vw, 48px) clamp(32px, 5vw, 48px)",
+          backgroundSize: "clamp(28px, 4.5vw, 48px) clamp(28px, 4.5vw, 48px)",
         }}
       />
 
-      <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center gap-10 px-4 py-10 sm:py-16">
+      {/* Content — always above the decorative layers */}
+      <div
+        className="relative w-full flex flex-col items-center"
+        style={{
+          zIndex: 1,
+          maxWidth: "768px",
+          margin: "0 auto",
+          padding:
+            "clamp(1.5rem, 5vh, 4rem) clamp(1rem, 4vw, 2rem) clamp(1.5rem, 5vh, 3rem)",
+          gap: "clamp(1.75rem, 5vh, 3rem)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
 
-        {/* Hero */}
-        <div className="w-full text-center flex flex-col items-center gap-4 sm:gap-6 animate-fade-in">
+        {/* ── Hero ─────────────────────────────────────────────────── */}
+        <div
+          className="w-full text-center flex flex-col items-center animate-fade-in"
+          style={{ gap: "clamp(0.875rem, 2.5vh, 1.5rem)" }}
+        >
           {/* Logo mark */}
           <div className="relative inline-flex">
             <div className="absolute inset-0 rounded-2xl bg-accent/25 blur-xl pointer-events-none" />
             <div
               className="relative rounded-2xl bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center shadow-glow"
               style={{
-                width:  "clamp(56px, 8vw, 80px)",
-                height: "clamp(56px, 8vw, 80px)",
+                width:  "clamp(52px, 10vw, 80px)",
+                height: "clamp(52px, 10vw, 80px)",
+                minWidth: "52px",
+                minHeight: "52px",
               }}
             >
               <svg
                 style={{
-                  width:  "clamp(28px, 4vw, 40px)",
-                  height: "clamp(28px, 4vw, 40px)",
+                  width:  "clamp(26px, 5vw, 40px)",
+                  height: "clamp(26px, 5vw, 40px)",
                 }}
                 className="text-white drop-shadow"
                 fill="none"
@@ -2715,11 +2830,11 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Title */}
-          <div className="space-y-2 sm:space-y-3">
+          {/* Title + subtitle */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "clamp(0.375rem, 1vh, 0.75rem)" }}>
             <h1
               className="font-bold text-text-primary tracking-tight"
-              style={{ fontSize: "clamp(2rem, 6vw, 3.75rem)" }}
+              style={{ fontSize: "clamp(1.75rem, 7vw, 3.75rem)", lineHeight: 1.15 }}
             >
               AI{" "}
               <span className="bg-gradient-to-r from-accent to-blue-400 bg-clip-text text-transparent">
@@ -2727,48 +2842,74 @@ export default function HomePage() {
               </span>
             </h1>
             <p
-              className="text-text-secondary max-w-md mx-auto leading-relaxed px-2"
-              style={{ fontSize: "clamp(0.875rem, 2.5vw, 1.125rem)" }}
+              className="text-text-secondary leading-relaxed"
+              style={{
+                fontSize: "clamp(0.8125rem, 2.8vw, 1.125rem)",
+                maxWidth: "min(480px, 90vw)",
+                margin: "0 auto",
+                paddingLeft: "clamp(0.5rem, 2vw, 1rem)",
+                paddingRight: "clamp(0.5rem, 2vw, 1rem)",
+              }}
             >
               One AI for everything — code, analyze, create, and solve.
               Lightning-fast, secure, and always improving.
             </p>
           </div>
 
-          {/* Login */}
-          <div className="pt-1">
+          {/* Login button */}
+          <div style={{ paddingTop: "clamp(0.125rem, 0.5vh, 0.375rem)" }}>
             <LoginButton />
           </div>
 
-          <p className="text-text-muted text-xs">
+          <p
+            className="text-text-muted"
+            style={{ fontSize: "clamp(0.65rem, 1.8vw, 0.75rem)" }}
+          >
             Sign in with Google · Your data never leaves our server
           </p>
         </div>
 
-        {/* Feature grid */}
+        {/* ── Feature grid ─────────────────────────────────────────── */}
         <div
-          className="w-full grid gap-3 animate-fade-in"
+          className="w-full animate-fade-in"
           style={{
             animationDelay: "0.1s",
+            display: "grid",
+            gap: "clamp(0.5rem, 1.5vw, 0.75rem)",
             gridTemplateColumns:
-              "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+              "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
           }}
         >
           {FEATURES.map((f, i) => (
             <div
               key={i}
-              className="group relative p-4 rounded-2xl bg-surface-1 border border-border hover:border-border-strong transition-all duration-300 hover:shadow-card-hover"
+              className="group relative rounded-2xl bg-surface-1 border border-border hover:border-border-strong transition-all duration-300 hover:shadow-card-hover"
+              style={{
+                padding: "clamp(0.75rem, 2.5vw, 1rem)",
+              }}
             >
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
               <div className="relative flex items-start gap-3">
-                <div className="mt-0.5 p-2 rounded-xl bg-accent/10 text-accent border border-accent/20 flex-shrink-0">
+                <div
+                  className="p-2 rounded-xl bg-accent/10 text-accent border border-accent/20 flex-shrink-0"
+                  style={{ marginTop: "0.125rem" }}
+                >
                   {f.icon}
                 </div>
                 <div className="min-w-0">
-                  <div className="font-semibold text-text-primary mb-1 text-sm">
+                  <div
+                    className="font-semibold text-text-primary"
+                    style={{
+                      fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
+                      marginBottom: "0.25rem",
+                    }}
+                  >
                     {f.title}
                   </div>
-                  <div className="text-text-secondary text-xs leading-relaxed">
+                  <div
+                    className="text-text-secondary leading-relaxed"
+                    style={{ fontSize: "clamp(0.6875rem, 1.8vw, 0.75rem)" }}
+                  >
                     {f.desc}
                   </div>
                 </div>
@@ -2777,13 +2918,18 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Footer */}
+        {/* ── Footer ───────────────────────────────────────────────── */}
         <p
-          className="text-text-muted text-xs text-center animate-fade-in"
-          style={{ animationDelay: "0.2s" }}
+          className="text-text-muted text-center animate-fade-in"
+          style={{
+            fontSize: "clamp(0.6rem, 1.6vw, 0.75rem)",
+            animationDelay: "0.2s",
+            paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          }}
         >
           Powered by Ollama · LiteLLM · PostgreSQL
         </p>
+
       </div>
     </main>
   );
@@ -2931,13 +3077,26 @@ export default function ChatPage() {
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function LoginButton() {
   const { login }  = useAuth();
   const router     = useRouter();
   const [error,    setError]   = useState<string | null>(null);
   const [loading,  setLoading] = useState(false);
+  const [btnWidth, setBtnWidth] = useState(280);
+
+  /* Responsively size the Google button to fit the viewport */
+  useEffect(() => {
+    const update = () => {
+      // leave 32px horizontal margin on each side, cap at 280px
+      const available = Math.min(window.innerWidth - 64, 280);
+      setBtnWidth(Math.max(200, available));
+    };
+    update();
+    window.addEventListener("resize", update, { passive: true });
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const handleSuccess = async (response: CredentialResponse) => {
     if (!response.credential) {
@@ -2957,30 +3116,57 @@ export default function LoginButton() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div
+      className="flex flex-col items-center"
+      style={{ gap: "clamp(0.5rem, 1.5vh, 0.75rem)" }}
+    >
       {loading ? (
-        <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-surface-2 border border-border text-text-secondary text-sm">
-          <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          Signing in…
+        <div
+          className="flex items-center gap-2 rounded-full bg-surface-2 border border-border text-text-secondary"
+          style={{
+            padding: "clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 4vw, 1.5rem)",
+            fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
+            minWidth: "200px",
+            justifyContent: "center",
+          }}
+        >
+          <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin flex-shrink-0" />
+          <span>Signing in…</span>
         </div>
       ) : (
+        /* Key forces re-mount when width changes so Google re-renders correctly */
         <GoogleLogin
+          key={btnWidth}
           onSuccess={handleSuccess}
           onError={() => setError("Google sign-in failed.")}
           theme="filled_black"
           size="large"
           shape="pill"
           text="signin_with"
-          width="280"
+          width={String(btnWidth)}
         />
       )}
+
       {error && (
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm animate-fade-in max-w-xs text-center">
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div
+          className="flex items-center gap-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 animate-fade-in text-center"
+          style={{
+            padding: "clamp(0.375rem, 1.2vw, 0.5rem) clamp(0.75rem, 2.5vw, 1rem)",
+            fontSize: "clamp(0.7rem, 1.8vw, 0.875rem)",
+            maxWidth: "min(320px, 90vw)",
+          }}
+        >
+          <svg
+            className="flex-shrink-0"
+            style={{ width: "clamp(14px, 2vw, 16px)", height: "clamp(14px, 2vw, 16px)" }}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          {error}
+          <span>{error}</span>
         </div>
       )}
     </div>
