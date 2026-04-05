@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { api } from "@/lib/api";
 
 interface User {
@@ -27,15 +33,14 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [user,    setUser]    = useState<User | null>(null);
+  const [token,   setToken]   = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore session
+  /* Restore session from localStorage */
   useEffect(() => {
     const savedToken = localStorage.getItem("auth_token");
-    const savedUser = localStorage.getItem("auth_user");
-
+    const savedUser  = localStorage.getItem("auth_user");
     if (savedToken && savedUser) {
       try {
         const parsedUser = JSON.parse(savedUser);
@@ -51,17 +56,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (credential: string) => {
-    try {
-      const data = await api.loginWithGoogle(credential);
-      setToken(data.token);
-      setUser(data.user);
-      api.setToken(data.token);
-      localStorage.setItem("auth_token", data.token);
-      localStorage.setItem("auth_user", JSON.stringify(data.user));
-    } catch (error) {
-      console.error("Login failed:", error);
-      throw error;
-    }
+    const data = await api.loginWithGoogle(credential);
+    setToken(data.token);
+    setUser(data.user);
+    api.setToken(data.token);
+    localStorage.setItem("auth_token", data.token);
+    localStorage.setItem("auth_user", JSON.stringify(data.user));
   }, []);
 
   const logout = useCallback(() => {

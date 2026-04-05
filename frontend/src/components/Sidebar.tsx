@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChatItem } from "@/hooks/useChat";
 
@@ -18,29 +18,26 @@ interface SidebarProps {
     profilePicture: string | null;
   };
   onLogout: () => void;
+  onMobileClose?: () => void;
 }
 
 function groupChatsByDate(chats: ChatItem[]) {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterday = new Date(today.getTime() - 86400000);
-  const lastWeek = new Date(today.getTime() - 7 * 86400000);
+  const now       = new Date();
+  const today     = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today.getTime() - 86_400_000);
+  const lastWeek  = new Date(today.getTime() - 7 * 86_400_000);
 
   const groups: Record<string, ChatItem[]> = {
-    Today: [],
-    Yesterday: [],
-    "Last 7 days": [],
-    Older: [],
+    Today: [], Yesterday: [], "Last 7 days": [], Older: [],
   };
 
   for (const chat of chats) {
     const d = new Date(chat.updatedAt);
-    if (d >= today) groups["Today"].push(chat);
+    if      (d >= today)     groups["Today"].push(chat);
     else if (d >= yesterday) groups["Yesterday"].push(chat);
-    else if (d >= lastWeek) groups["Last 7 days"].push(chat);
-    else groups["Older"].push(chat);
+    else if (d >= lastWeek)  groups["Last 7 days"].push(chat);
+    else                     groups["Older"].push(chat);
   }
-
   return groups;
 }
 
@@ -52,83 +49,95 @@ interface ChatItemRowProps {
   onDelete: () => void;
 }
 
-function ChatItemRow({ chat, isActive, onSelect, onRename, onDelete }: ChatItemRowProps) {
-  const [editing, setEditing] = useState(false);
-  const [title, setTitle] = useState(chat.title);
+function ChatItemRow({
+  chat, isActive, onSelect, onRename, onDelete,
+}: ChatItemRowProps) {
+  const [editing,  setEditing]  = useState(false);
+  const [title,    setTitle]    = useState(chat.title);
   const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef  = useRef<HTMLDivElement>(null);
 
-  // Sync title if chat prop changes (e.g., auto-title from AI)
   useEffect(() => {
     if (!editing) setTitle(chat.title);
   }, [chat.title, editing]);
 
-  // Close menu on outside click
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    if (!menuOpen) return;
+    const close = (e: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
     };
-    if (menuOpen) document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("mousedown", close);
+    document.addEventListener("touchstart", close, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("touchstart", close);
+    };
   }, [menuOpen]);
 
-  const confirmRename = () => {
-    const trimmed = title.trim();
-    if (trimmed && trimmed !== chat.title) onRename(trimmed);
+  const confirmRename = useCallback(() => {
+    const t = title.trim();
+    if (t && t !== chat.title) onRename(t);
     else setTitle(chat.title);
     setEditing(false);
-  };
+  }, [title, chat.title, onRename]);
 
   return (
     <div
-      className={`group relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
+      role="button"
+      tabIndex={0}
+      aria-label={`Open chat: ${chat.title}`}
+      className={[
+        "group relative flex items-center gap-2 px-3 py-2.5 rounded-xl",
+        "cursor-pointer select-none transition-colors duration-150",
         isActive
           ? "bg-accent/15 text-text-primary border border-accent/25"
-          : "text-text-secondary hover:bg-surface-2 hover:text-text-primary border border-transparent"
-      }`}
+          : "text-text-secondary hover:bg-surface-2 hover:text-text-primary border border-transparent",
+      ].join(" ")}
       onClick={() => !editing && onSelect()}
+      onKeyDown={(e) => { if (e.key === "Enter" && !editing) onSelect(); }}
     >
-      {/* Icon */}
       <svg
-        className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive ? "text-accent" : "text-text-muted group-hover:text-text-secondary"}`}
+        className={`w-4 h-4 flex-shrink-0 ${
+          isActive ? "text-accent" : "text-text-muted group-hover:text-text-secondary"
+        }`}
         fill="none" stroke="currentColor" viewBox="0 0 24 24"
       >
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
 
-      {/* Title / Edit input */}
       {editing ? (
         <input
           ref={inputRef}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") confirmRename();
+            if (e.key === "Enter")  confirmRename();
             if (e.key === "Escape") { setTitle(chat.title); setEditing(false); }
           }}
           onBlur={confirmRename}
           autoFocus
-          className="flex-1 bg-surface-3 text-text-primary text-sm px-2 py-0.5 rounded-md outline-none border border-accent/40 focus:border-accent"
+          className="flex-1 min-w-0 bg-surface-3 text-text-primary text-sm px-2 py-0.5 rounded-md outline-none border border-accent/40 focus:border-accent"
           onClick={(e) => e.stopPropagation()}
         />
       ) : (
-        <span className="flex-1 truncate text-sm">{chat.title}</span>
+        <span className="flex-1 min-w-0 truncate text-sm">{chat.title}</span>
       )}
 
-      {/* Context menu button */}
       {!editing && (
         <div
-          className={`relative transition-opacity ${menuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
           ref={menuRef}
+          className={`relative flex-shrink-0 transition-opacity ${
+            menuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
         >
           <button
+            aria-label="Chat options"
             onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
-            className="p-1 rounded-md hover:bg-surface-3 text-text-muted hover:text-text-primary transition-colors"
-            title="Options"
+            className="p-1.5 rounded-md hover:bg-surface-3 text-text-muted hover:text-text-primary transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 13.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm-5 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm10 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
@@ -176,46 +185,36 @@ function ChatItemRow({ chat, isActive, onSelect, onRename, onDelete }: ChatItemR
 }
 
 export default function Sidebar({
-  chats,
-  activeChat,
-  onSelectChat,
-  onNewChat,
-  onRenameChat,
-  onDeleteChat,
-  user,
-  onLogout,
+  chats, activeChat, onSelectChat, onNewChat,
+  onRenameChat, onDeleteChat, user, onLogout, onMobileClose,
 }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(true);
-  const [search, setSearch] = useState("");
+  const [isCollapsed,     setIsCollapsed]     = useState(false);
+  const [search,          setSearch]          = useState("");
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const filtered = search.trim()
     ? chats.filter((c) => c.title.toLowerCase().includes(search.toLowerCase()))
     : chats;
 
-  const grouped = groupChatsByDate(filtered);
+  const grouped  = groupChatsByDate(filtered);
   const hasChats = chats.length > 0;
 
-  const handleDelete = (chatId: string) => {
-    setDeleteConfirmId(chatId);
-  };
-
-  const confirmDelete = () => {
+  const confirmDelete = useCallback(() => {
     if (deleteConfirmId) {
       onDeleteChat(deleteConfirmId);
       setDeleteConfirmId(null);
     }
-  };
+  }, [deleteConfirmId, onDeleteChat]);
 
-  // Collapsed sidebar
-  if (!isOpen) {
+  /* Collapsed — desktop only */
+  if (isCollapsed) {
     return (
       <>
-        <div className="flex flex-col items-center py-3 px-2 gap-3 bg-surface-1 border-r border-border h-full">
+        <aside className="hidden lg:flex flex-col items-center py-3 px-2 gap-3 bg-surface-1 border-r border-border h-full w-14 flex-shrink-0">
           <button
-            onClick={() => setIsOpen(true)}
-            className="p-2.5 rounded-xl hover:bg-surface-2 text-text-muted hover:text-text-primary transition-all focus-ring"
-            title="Open sidebar"
+            onClick={() => setIsCollapsed(false)}
+            className="p-2.5 rounded-xl hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring"
+            aria-label="Expand sidebar"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
@@ -224,26 +223,28 @@ export default function Sidebar({
           <div className="h-px w-full bg-border" />
           <button
             onClick={onNewChat}
-            className="p-2.5 rounded-xl hover:bg-accent/15 text-text-muted hover:text-accent transition-all focus-ring"
-            title="New chat"
+            className="p-2.5 rounded-xl hover:bg-accent/15 text-text-muted hover:text-accent transition-colors focus-ring"
+            aria-label="New chat"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </button>
-        </div>
-
-        {/* Delete confirm modal */}
-        {deleteConfirmId && <DeleteModal onConfirm={confirmDelete} onCancel={() => setDeleteConfirmId(null)} />}
+        </aside>
+        {deleteConfirmId && (
+          <DeleteModal onConfirm={confirmDelete} onCancel={() => setDeleteConfirmId(null)} />
+        )}
       </>
     );
   }
 
+  /* Full sidebar */
   return (
     <>
-      <aside className="w-[272px] min-w-[272px] bg-surface-1 border-r border-border flex flex-col h-full overflow-hidden">
+      <aside className="w-full h-full bg-surface-1 border-r border-border flex flex-col overflow-hidden lg:w-[272px] lg:min-w-[272px] lg:flex-shrink-0">
+
         {/* Top bar */}
-        <div className="flex items-center gap-2 p-3 border-b border-border">
+        <div className="flex items-center gap-2 px-3 py-3 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center flex-shrink-0">
               <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,31 +255,46 @@ export default function Sidebar({
             <span className="font-semibold text-sm text-text-primary truncate">AI Chat</span>
           </div>
 
+          {/* New chat */}
           <button
             onClick={onNewChat}
-            className="p-2 rounded-lg hover:bg-accent/15 text-text-muted hover:text-accent transition-all focus-ring"
-            title="New chat (Ctrl+N)"
+            className="p-2 rounded-lg hover:bg-accent/15 text-text-muted hover:text-accent transition-colors focus-ring flex-shrink-0"
+            aria-label="New chat"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </button>
 
+          {/* Desktop collapse */}
           <button
-            onClick={() => setIsOpen(false)}
-            className="p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-all focus-ring"
-            title="Collapse sidebar"
+            onClick={() => setIsCollapsed(true)}
+            className="hidden lg:flex p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring flex-shrink-0"
+            aria-label="Collapse sidebar"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                 d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
           </button>
+
+          {/* Mobile close */}
+          {onMobileClose && (
+            <button
+              onClick={onMobileClose}
+              className="flex lg:hidden p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring flex-shrink-0"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Search */}
         {hasChats && (
-          <div className="px-3 pt-2 pb-1">
+          <div className="px-3 pt-2 pb-1 flex-shrink-0">
             <div className="flex items-center gap-2 bg-surface-2 border border-border rounded-lg px-3 py-1.5">
               <svg className="w-3.5 h-3.5 text-text-muted flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -288,10 +304,14 @@ export default function Sidebar({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search chats…"
-                className="flex-1 bg-transparent text-sm text-text-primary placeholder-text-muted outline-none"
+                className="flex-1 min-w-0 bg-transparent text-sm text-text-primary placeholder-text-muted outline-none"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="text-text-muted hover:text-text-secondary transition-colors">
+                <button
+                  onClick={() => setSearch("")}
+                  aria-label="Clear search"
+                  className="flex-shrink-0 text-text-muted hover:text-text-secondary transition-colors"
+                >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -301,10 +321,17 @@ export default function Sidebar({
           </div>
         )}
 
-        {/* Chat list */}
-        <div className="flex-1 overflow-y-auto px-2 py-2">
+        {/* Chat list — touch-scrollable */}
+        <div
+          className="flex-1 min-h-0 px-2 py-2"
+          style={{
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            overscrollBehavior: "contain",
+          } as React.CSSProperties}
+        >
           {!hasChats ? (
-            <div className="flex flex-col items-center justify-center h-40 gap-3 text-center px-4">
+            <div className="flex flex-col items-center justify-center h-36 gap-3 text-center px-4">
               <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border flex items-center justify-center">
                 <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -313,11 +340,11 @@ export default function Sidebar({
               </div>
               <div>
                 <p className="text-text-secondary text-sm font-medium">No chats yet</p>
-                <p className="text-text-muted text-xs mt-1">Start a conversation below</p>
+                <p className="text-text-muted text-xs mt-1">Start a conversation</p>
               </div>
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-8 text-text-muted text-sm">
+            <div className="text-center py-8 text-text-muted text-sm px-3">
               No chats match &ldquo;{search}&rdquo;
             </div>
           ) : (
@@ -325,9 +352,9 @@ export default function Sidebar({
               {Object.entries(grouped).map(([label, items]) =>
                 items.length === 0 ? null : (
                   <div key={label}>
-                    <div className="px-3 py-1 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                    <p className="px-3 py-1 text-xs font-semibold text-text-muted uppercase tracking-wider">
                       {label}
-                    </div>
+                    </p>
                     <div className="space-y-0.5 mt-1">
                       {items.map((chat) => (
                         <ChatItemRow
@@ -336,7 +363,7 @@ export default function Sidebar({
                           isActive={activeChat?.id === chat.id}
                           onSelect={() => onSelectChat(chat)}
                           onRename={(t) => onRenameChat(chat.id, t)}
-                          onDelete={() => handleDelete(chat.id)}
+                          onDelete={() => setDeleteConfirmId(chat.id)}
                         />
                       ))}
                     </div>
@@ -348,7 +375,13 @@ export default function Sidebar({
         </div>
 
         {/* User panel */}
-        <div className="border-t border-border p-3">
+        <div
+          className="border-t border-border p-3 flex-shrink-0"
+          style={{
+            paddingBottom:
+              "calc(0.75rem + env(safe-area-inset-bottom, 0px))",
+          }}
+        >
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-2 transition-colors group">
             {user.profilePicture ? (
               <Image
@@ -356,7 +389,7 @@ export default function Sidebar({
                 alt={user.name}
                 width={34}
                 height={34}
-                className="rounded-full ring-2 ring-border"
+                className="rounded-full ring-2 ring-border flex-shrink-0"
               />
             ) : (
               <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
@@ -369,8 +402,8 @@ export default function Sidebar({
             </div>
             <button
               onClick={onLogout}
-              className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all focus-ring"
-              title="Sign out"
+              className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all focus-ring flex-shrink-0"
+              aria-label="Sign out"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -381,7 +414,6 @@ export default function Sidebar({
         </div>
       </aside>
 
-      {/* Delete confirm modal */}
       {deleteConfirmId && (
         <DeleteModal
           onConfirm={confirmDelete}
@@ -392,11 +424,26 @@ export default function Sidebar({
   );
 }
 
-function DeleteModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+function DeleteModal({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative bg-surface-2 border border-border-strong rounded-2xl shadow-float p-6 max-w-sm w-full animate-bounce-in">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
+      <div
+        className="relative bg-surface-2 border border-border-strong shadow-float w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-5 animate-bounce-in"
+        style={{
+          paddingBottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
+        }}
+      >
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center flex-shrink-0">
             <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -418,7 +465,7 @@ function DeleteModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel:
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white transition-all text-sm font-medium shadow-sm focus-ring"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white transition-all text-sm font-medium focus-ring"
           >
             Delete
           </button>

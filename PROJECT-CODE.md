@@ -1387,8 +1387,7 @@ export default app;
 ```json
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
-    "target": "es5",
+    "target": "ES2017",
     "lib": [
       "dom",
       "dom.iterable",
@@ -1474,6 +1473,14 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   darkMode: "class",
   theme: {
+    screens: {
+      xs:    "360px",
+      sm:    "480px",
+      md:    "768px",
+      lg:    "1024px",
+      xl:    "1280px",
+      "2xl": "1536px",
+    },
     extend: {
       colors: {
         surface: {
@@ -1485,82 +1492,78 @@ module.exports = {
         },
         border: {
           DEFAULT: "rgba(255,255,255,0.08)",
-          strong: "rgba(255,255,255,0.14)",
+          strong:  "rgba(255,255,255,0.14)",
         },
         accent: {
           DEFAULT: "#7c6af7",
-          hover: "#6b59e6",
-          muted: "rgba(124,106,247,0.15)",
-          glow: "rgba(124,106,247,0.35)",
+          hover:   "#6b59e6",
+          muted:   "rgba(124,106,247,0.15)",
+          glow:    "rgba(124,106,247,0.35)",
         },
         text: {
-          primary: "#f0f0f2",
+          primary:   "#f0f0f2",
           secondary: "#9898a6",
-          muted: "#5c5c6b",
+          muted:     "#5c5c6b",
         },
       },
       fontFamily: {
-        sans: [
-          "Inter",
-          "ui-sans-serif",
-          "system-ui",
-          "-apple-system",
-          "sans-serif",
-        ],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "sans-serif"],
         mono: ["JetBrains Mono", "Fira Code", "ui-monospace", "monospace"],
+      },
+      fontSize: {
+        "2xs": ["0.625rem", { lineHeight: "1rem" }],
       },
       keyframes: {
         "fade-in": {
-          from: { opacity: "0", transform: "translateY(8px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to:   { opacity: "1", transform: "translateY(0)" },
         },
         "slide-in-left": {
-          from: { opacity: "0", transform: "translateX(-16px)" },
-          to: { opacity: "1", transform: "translateX(0)" },
+          from: { opacity: "0", transform: "translateX(-14px)" },
+          to:   { opacity: "1", transform: "translateX(0)" },
         },
         "slide-in-right": {
-          from: { opacity: "0", transform: "translateX(16px)" },
-          to: { opacity: "1", transform: "translateX(0)" },
+          from: { opacity: "0", transform: "translateX(14px)" },
+          to:   { opacity: "1", transform: "translateX(0)" },
         },
         blink: {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0" },
+          "50%":       { opacity: "0" },
         },
         pulse: {
-          "0%, 100%": { transform: "scale(1)", opacity: "0.6" },
-          "50%": { transform: "scale(1.4)", opacity: "1" },
+          "0%, 100%": { transform: "scale(1)",   opacity: "0.6" },
+          "50%":       { transform: "scale(1.4)", opacity: "1"   },
         },
         shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+          "0%":   { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition:  "200% 0" },
         },
         "spin-slow": {
           from: { transform: "rotate(0deg)" },
-          to: { transform: "rotate(360deg)" },
+          to:   { transform: "rotate(360deg)" },
         },
         "bounce-in": {
-          "0%": { transform: "scale(0.8)", opacity: "0" },
-          "60%": { transform: "scale(1.05)", opacity: "1" },
+          "0%":   { transform: "scale(0.85)", opacity: "0" },
+          "60%":  { transform: "scale(1.04)", opacity: "1" },
           "100%": { transform: "scale(1)" },
         },
       },
       animation: {
-        "fade-in": "fade-in 0.2s ease-out forwards",
-        "slide-in-left": "slide-in-left 0.2s ease-out forwards",
+        "fade-in":        "fade-in 0.2s ease-out forwards",
+        "slide-in-left":  "slide-in-left 0.2s ease-out forwards",
         "slide-in-right": "slide-in-right 0.2s ease-out forwards",
-        blink: "blink 1s ease-in-out infinite",
-        pulse: "pulse 1.4s ease-in-out infinite",
-        shimmer: "shimmer 2s linear infinite",
-        "spin-slow": "spin-slow 2s linear infinite",
-        "bounce-in": "bounce-in 0.3s ease-out forwards",
+        blink:            "blink 1s ease-in-out infinite",
+        pulse:            "pulse 1.4s ease-in-out infinite",
+        shimmer:          "shimmer 2s linear infinite",
+        "spin-slow":      "spin-slow 2s linear infinite",
+        "bounce-in":      "bounce-in 0.3s ease-out forwards",
       },
       boxShadow: {
-        glow: "0 0 20px rgba(124,106,247,0.25), 0 0 60px rgba(124,106,247,0.1)",
-        "glow-sm": "0 0 10px rgba(124,106,247,0.2)",
-        card: "0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3)",
-        "card-hover":
-          "0 4px 16px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.3)",
-        float: "0 8px 32px rgba(0,0,0,0.6)",
+        glow:         "0 0 20px rgba(124,106,247,0.25), 0 0 60px rgba(124,106,247,0.1)",
+        "glow-sm":    "0 0 10px rgba(124,106,247,0.2)",
+        card:         "0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3)",
+        "card-hover": "0 4px 16px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.3)",
+        float:        "0 8px 32px rgba(0,0,0,0.6)",
       },
     },
   },
@@ -1584,6 +1587,7 @@ module.exports = {
 ```env
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com
 NEXT_PUBLIC_API_URL=http://localhost:4000
+ALLOWED_DEV_ORIGIN=unreversible-helga-supermilitary.ngrok-free.dev
 ```
 
 ### `frontend/src/app/globals.css`
@@ -1595,15 +1599,28 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* ─── Reset ──────────────────────────────────────── */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html,
+/* ─── Root sizing ────────────────────────────────── */
+html {
+  height: 100%;
+  height: -webkit-fill-available;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   height: 100%;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
   overflow: hidden;
   background-color: #0f0f10;
   color: #f0f0f2;
@@ -1612,22 +1629,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Scrollbars ─────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+#__next {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
+/* ─── Scrollbars ─────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  transition: background 0.2s;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
@@ -1638,20 +1658,29 @@ body {
   color: #fff;
 }
 
-/* ─── Markdown message content ───────────────────── */
+/* ─── Tap highlight & touch ──────────────────────── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+[role="button"] {
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* ─── Markdown content ───────────────────────────── */
 .message-content {
   line-height: 1.75;
-  font-size: 0.9375rem;
+  font-size: clamp(0.8125rem, 2.2vw, 0.9375rem);
   color: #e8e8ee;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+  max-width: 100%;
 }
 
-.message-content > *:first-child {
-  margin-top: 0;
-}
-
-.message-content > *:last-child {
-  margin-bottom: 0;
-}
+.message-content > *:first-child { margin-top: 0; }
+.message-content > *:last-child  { margin-bottom: 0; }
 
 .message-content h1,
 .message-content h2,
@@ -1662,43 +1691,39 @@ body {
   margin-bottom: 0.6em;
   color: #f0f0f2;
   letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
-
 .message-content h1 {
-  font-size: 1.4em;
+  font-size: clamp(1.1em, 3vw, 1.4em);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   padding-bottom: 0.4em;
 }
-
-.message-content h2 {
-  font-size: 1.2em;
-}
-
-.message-content h3 {
-  font-size: 1.05em;
-}
+.message-content h2 { font-size: clamp(1em, 2.5vw, 1.2em); }
+.message-content h3 { font-size: clamp(0.95em, 2vw, 1.05em); }
 
 .message-content p {
   margin-bottom: 0.9em;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .message-content ul,
 .message-content ol {
-  margin-left: 1.4em;
+  margin-left: clamp(1em, 3vw, 1.4em);
   margin-bottom: 0.9em;
   display: flex;
   flex-direction: column;
   gap: 0.25em;
 }
-
 .message-content li {
   padding-left: 0.2em;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
-
 .message-content ul li::marker {
   color: rgba(124, 106, 247, 0.8);
 }
-
 .message-content ol li::marker {
   color: rgba(124, 106, 247, 0.8);
   font-weight: 600;
@@ -1712,24 +1737,29 @@ body {
   border-radius: 5px;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.85em;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 
 .message-content pre {
-  margin: 1em 0;
+  margin: 0.8em 0;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.07);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  max-width: 100%;
 }
 
 .message-content blockquote {
   border-left: 3px solid rgba(124, 106, 247, 0.6);
-  padding: 0.5em 1em;
+  padding: 0.5em 0.75em;
   margin: 0.9em 0;
   background: rgba(124, 106, 247, 0.06);
   border-radius: 0 8px 8px 0;
   color: #9898a6;
   font-style: italic;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .message-content a {
@@ -1737,76 +1767,72 @@ body {
   text-decoration: none;
   border-bottom: 1px solid rgba(163, 148, 255, 0.3);
   transition: border-color 0.15s, color 0.15s;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
-
 .message-content a:hover {
   color: #c4b8ff;
   border-bottom-color: rgba(196, 184, 255, 0.6);
 }
 
+.message-content .table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1em 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
 .message-content table {
   border-collapse: collapse;
   width: 100%;
-  margin: 1em 0;
   font-size: 0.9em;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
-
 .message-content th {
   background: rgba(124, 106, 247, 0.12);
-  padding: 0.6em 1em;
+  padding: 0.5em 0.8em;
   text-align: left;
   font-weight: 600;
-  font-size: 0.85em;
+  font-size: 0.82em;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #c4b8ff;
+  white-space: nowrap;
 }
-
 .message-content td {
-  padding: 0.6em 1em;
+  padding: 0.5em 0.8em;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
-
 .message-content tr:nth-child(even) td {
   background: rgba(255, 255, 255, 0.02);
 }
-
 .message-content hr {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin: 1.2em 0;
 }
 
-/* ─── Code block header ──────────────────────────── */
+/* ─── Code block ─────────────────────────────────── */
 .code-block-wrapper {
   position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
 }
-
 .code-block-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: rgba(255, 255, 255, 0.04);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  padding: 0.5em 1em;
+  padding: 0.4em 0.75em;
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #6b6b7e;
 }
-
-/* ─── Shimmer loading ────────────────────────────── */
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.03) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s linear infinite;
+.code-block-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ─── Typing cursor ──────────────────────────────── */
@@ -1821,9 +1847,9 @@ body {
   animation: blink 1s ease-in-out infinite;
 }
 
-/* ─── Glass panel ────────────────────────────────── */
+/* ─── Glass ──────────────────────────────────────── */
 .glass {
-  background: rgba(26, 26, 29, 0.8);
+  background: rgba(26, 26, 29, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
@@ -1833,44 +1859,266 @@ body {
   outline: 2px solid rgba(124, 106, 247, 0.7);
   outline-offset: 2px;
 }
+
+/* ─── Shimmer ─────────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* ─── Sidebar overlay ────────────────────────────── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: fade-in 0.18s ease-out forwards;
+}
+
+/* ─── Sidebar drawer ─────────────────────────────── */
+.sidebar-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 50;
+  width: min(280px, 85vw);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+.sidebar-drawer.open {
+  transform: translateX(0);
+}
+
+/* ─── Chat layout root ───────────────────────────── */
+.chat-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── Messages scroll container ─────────────────── */
+/*
+ * Critical: this is the ONLY element that scrolls vertically.
+ * - overflow-y: auto  (not scroll, to hide bar when not needed)
+ * - -webkit-overflow-scrolling: touch  → iOS momentum / inertia
+ * - overscroll-behavior-y: contain     → no scroll chaining to body
+ * - touch-action: pan-y               → allow vertical finger pan
+ * - min-height: 0                     → flex child must shrink past content
+ */
+.messages-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  min-height: 0;
+  flex: 1 1 0%;
+}
+
+/* ─── Messages inner list ────────────────────────── */
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: min(768px, 100%);
+  margin: 0 auto;
+  padding: clamp(0.75rem, 2vw, 1.5rem) clamp(0.5rem, 2vw, 1rem);
+  min-height: 100%;
+}
+
+/* ─── Input wrapper ──────────────────────────────── */
+.input-wrapper {
+  flex-shrink: 0;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 15, 16, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: clamp(0.6rem, 1.5vw, 0.875rem) clamp(0.5rem, 2vw, 1rem);
+  padding-bottom: calc(
+    clamp(0.6rem, 1.5vw, 0.875rem) + env(safe-area-inset-bottom, 0px)
+  );
+}
+
+.input-inner {
+  width: 100%;
+  max-width: min(768px, 100%);
+  margin: 0 auto;
+}
+
+/* ─── Textarea container ─────────────────────────── */
+.textarea-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a1d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 52px;
+}
+.textarea-container:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.textarea-container:focus-within {
+  border-color: rgba(124, 106, 247, 0.5);
+  box-shadow: 0 0 0 3px rgba(124, 106, 247, 0.1),
+              0 0 12px rgba(124, 106, 247, 0.08);
+}
+.textarea-container.disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* ─── Chat textarea ──────────────────────────────── */
+.chat-textarea {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  color: #f0f0f2;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* ≥ 16px prevents iOS auto-zoom on focus */
+  font-size: max(16px, clamp(0.875rem, 2.5vw, 0.9375rem));
+  line-height: 1.6;
+  outline: none;
+  resize: none;
+  border: none;
+  padding: 0.8rem 1rem 0 1rem;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto;
+}
+.chat-textarea::placeholder {
+  color: #5c5c6b;
+}
+.chat-textarea:disabled {
+  cursor: not-allowed;
+  color: #5c5c6b;
+}
+
+/* ─── Input bottom bar ───────────────────────────── */
+.input-bottom-bar {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.625rem 0.55rem 1rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ─── Send button ────────────────────────────────── */
+.send-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+.send-btn.active {
+  background: #7c6af7;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(124, 106, 247, 0.35);
+}
+.send-btn.active:hover {
+  background: #6b59e6;
+  transform: scale(1.05);
+}
+.send-btn.active:active {
+  transform: scale(0.95);
+}
+.send-btn.inactive {
+  background: #2e2e33;
+  color: #5c5c6b;
+  cursor: not-allowed;
+}
+
+/* ─── Disclaimer ─────────────────────────────────── */
+.input-disclaimer {
+  text-align: center;
+  font-size: clamp(0.6rem, 1.5vw, 0.65rem);
+  color: #5c5c6b;
+  margin-top: 0.35rem;
+  line-height: 1.4;
+  user-select: none;
+}
+
+/* ─── Keyframes ──────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1);   opacity: 0.6; }
+  50%       { transform: scale(1.4); opacity: 1;   }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes bounce-in {
+  0%   { transform: scale(0.85); opacity: 0; }
+  60%  { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); }
+}
 ```
 
 ### `frontend/src/lib/api.ts`
 
 ```typescript
-// Change this line:
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
-// To this:
 const API_URL = "";
 
 class ApiClient {
   private token: string | null = null;
 
-  setToken(token: string | null) {
-    this.token = token;
-  }
-
-  getToken(): string | null {
-    return this.token;
-  }
+  setToken(token: string | null) { this.token = token; }
+  getToken(): string | null      { return this.token; }
 
   private headers(): HeadersInit {
-    const h: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-    if (this.token) {
-      h["Authorization"] = `Bearer ${this.token}`;
-    }
+    const h: HeadersInit = { "Content-Type": "application/json" };
+    if (this.token) h["Authorization"] = `Bearer ${this.token}`;
     return h;
   }
 
-  // ─── Auth ─────────────────────────────────────────
+  /* ── Auth ───────────────────────────────────────── */
   async loginWithGoogle(credential: string) {
     const res = await fetch(`${API_URL}/api/auth/google`, {
-      method: "POST",
+      method:  "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential }),
+      body:    JSON.stringify({ credential }),
     });
     if (!res.ok) throw new Error("Login failed");
     return res.json();
@@ -1884,7 +2132,7 @@ class ApiClient {
     return res.json();
   }
 
-  // ─── Chats ────────────────────────────────────────
+  /* ── Chats ──────────────────────────────────────── */
   async getChats() {
     const res = await fetch(`${API_URL}/api/chats`, {
       headers: this.headers(),
@@ -1895,9 +2143,9 @@ class ApiClient {
 
   async createChat(title?: string) {
     const res = await fetch(`${API_URL}/api/chats`, {
-      method: "POST",
+      method:  "POST",
       headers: this.headers(),
-      body: JSON.stringify({ title }),
+      body:    JSON.stringify({ title }),
     });
     if (!res.ok) throw new Error("Failed to create chat");
     return res.json();
@@ -1905,9 +2153,9 @@ class ApiClient {
 
   async updateChat(chatId: string, title: string) {
     const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
-      method: "PATCH",
+      method:  "PATCH",
       headers: this.headers(),
-      body: JSON.stringify({ title }),
+      body:    JSON.stringify({ title }),
     });
     if (!res.ok) throw new Error("Failed to update chat");
     return res.json();
@@ -1915,14 +2163,14 @@ class ApiClient {
 
   async deleteChat(chatId: string) {
     const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
-      method: "DELETE",
+      method:  "DELETE",
       headers: this.headers(),
     });
     if (!res.ok) throw new Error("Failed to delete chat");
     return res.json();
   }
 
-  // ─── Messages ─────────────────────────────────────
+  /* ── Messages ───────────────────────────────────── */
   async getMessages(chatId: string) {
     const res = await fetch(`${API_URL}/api/chats/${chatId}/messages`, {
       headers: this.headers(),
@@ -1933,9 +2181,9 @@ class ApiClient {
 
   async sendMessage(chatId: string, content: string, model?: string) {
     const res = await fetch(`${API_URL}/api/chats/${chatId}/messages`, {
-      method: "POST",
+      method:  "POST",
       headers: this.headers(),
-      body: JSON.stringify({ content, model, stream: false }),
+      body:    JSON.stringify({ content, model, stream: false }),
     });
     if (!res.ok) throw new Error("Failed to send message");
     return res.json();
@@ -1945,26 +2193,20 @@ class ApiClient {
     chatId: string,
     content: string,
     onChunk: (text: string) => void,
-    onDone: (messageId: string) => void,
+    onDone:  (messageId: string) => void,
     onError: (error: string) => void,
     model?: string
   ) {
     const res = await fetch(`${API_URL}/api/chats/${chatId}/messages`, {
-      method: "POST",
+      method:  "POST",
       headers: this.headers(),
-      body: JSON.stringify({ content, model, stream: true }),
+      body:    JSON.stringify({ content, model, stream: true }),
     });
 
-    if (!res.ok) {
-      onError("Failed to send message");
-      return;
-    }
+    if (!res.ok) { onError("Failed to send message"); return; }
 
     const reader = res.body?.getReader();
-    if (!reader) {
-      onError("No response body");
-      return;
-    }
+    if (!reader)  { onError("No response body");      return; }
 
     const decoder = new TextDecoder();
     let buffer = "";
@@ -1981,22 +2223,16 @@ class ApiClient {
         if (line.startsWith("data: ")) {
           try {
             const data = JSON.parse(line.slice(6));
-            if (data.content) {
-              onChunk(data.content);
-            } else if (data.done) {
-              onDone(data.messageId);
-            } else if (data.error) {
-              onError(data.error);
-            }
-          } catch {
-            // skip malformed JSON
-          }
+            if (data.content)    onChunk(data.content);
+            else if (data.done)  onDone(data.messageId);
+            else if (data.error) onError(data.error);
+          } catch { /* skip malformed */ }
         }
       }
     }
   }
 
-  // ─── Models ───────────────────────────────────────
+  /* ── Models ─────────────────────────────────────── */
   async getModels() {
     const res = await fetch(`${API_URL}/api/models`, {
       headers: this.headers(),
@@ -2014,7 +2250,13 @@ export const api = new ApiClient();
 ```tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { api } from "@/lib/api";
 
 interface User {
@@ -2041,15 +2283,14 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [user,    setUser]    = useState<User | null>(null);
+  const [token,   setToken]   = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore session
+  /* Restore session from localStorage */
   useEffect(() => {
     const savedToken = localStorage.getItem("auth_token");
-    const savedUser = localStorage.getItem("auth_user");
-
+    const savedUser  = localStorage.getItem("auth_user");
     if (savedToken && savedUser) {
       try {
         const parsedUser = JSON.parse(savedUser);
@@ -2065,17 +2306,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (credential: string) => {
-    try {
-      const data = await api.loginWithGoogle(credential);
-      setToken(data.token);
-      setUser(data.user);
-      api.setToken(data.token);
-      localStorage.setItem("auth_token", data.token);
-      localStorage.setItem("auth_user", JSON.stringify(data.user));
-    } catch (error) {
-      console.error("Login failed:", error);
-      throw error;
-    }
+    const data = await api.loginWithGoogle(credential);
+    setToken(data.token);
+    setUser(data.user);
+    api.setToken(data.token);
+    localStorage.setItem("auth_token", data.token);
+    localStorage.setItem("auth_user", JSON.stringify(data.user));
   }, []);
 
   const logout = useCallback(() => {
@@ -2120,14 +2356,13 @@ export interface MessageItem {
 }
 
 export function useChat() {
-  const [chats, setChats] = useState<ChatItem[]>([]);
+  const [chats,      setChats]      = useState<ChatItem[]>([]);
   const [activeChat, setActiveChat] = useState<ChatItem | null>(null);
-  const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSending, setIsSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [messages,   setMessages]   = useState<MessageItem[]>([]);
+  const [isLoading,  setIsLoading]  = useState(false);
+  const [isSending,  setIsSending]  = useState(false);
+  const [error,      setError]      = useState<string | null>(null);
 
-  // Ref so streaming callbacks always see the latest active chat
   const activeChatRef = useRef<ChatItem | null>(null);
   activeChatRef.current = activeChat;
 
@@ -2159,7 +2394,7 @@ export function useChat() {
 
   const createNewChat = useCallback(async (): Promise<ChatItem | null> => {
     try {
-      const data = await api.createChat();
+      const data    = await api.createChat();
       const newChat: ChatItem = data.chat;
       setChats((prev) => [newChat, ...prev]);
       setActiveChat(newChat);
@@ -2172,7 +2407,6 @@ export function useChat() {
     }
   }, []);
 
-  // No model param — backend always uses its configured default
   const sendMessage = useCallback(
     async (content: string) => {
       const chat = activeChatRef.current;
@@ -2182,8 +2416,8 @@ export function useChat() {
       setError(null);
 
       const tempUserMsg: MessageItem = {
-        id: `temp-user-${Date.now()}`,
-        role: "user",
+        id:        `temp-user-${Date.now()}`,
+        role:      "user",
         content,
         createdAt: new Date().toISOString(),
       };
@@ -2191,9 +2425,9 @@ export function useChat() {
 
       const tempAssistantId = `temp-assistant-${Date.now()}`;
       const tempAssistantMsg: MessageItem = {
-        id: tempAssistantId,
-        role: "assistant",
-        content: "",
+        id:        tempAssistantId,
+        role:      "assistant",
+        content:   "",
         createdAt: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, tempAssistantMsg]);
@@ -2202,7 +2436,7 @@ export function useChat() {
         await api.sendMessageStream(
           chat.id,
           content,
-          // onChunk
+          /* onChunk */
           (chunk: string) => {
             setMessages((prev) =>
               prev.map((m) =>
@@ -2212,16 +2446,16 @@ export function useChat() {
               )
             );
           },
-          // onDone
+          /* onDone */
           (messageId: string) => {
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === tempAssistantId ? { ...m, id: messageId } : m
               )
             );
-            fetchChats(); // refresh list so auto-title appears
+            fetchChats();
           },
-          // onError
+          /* onError */
           (errorMsg: string) => {
             setError(errorMsg);
             setMessages((prev) =>
@@ -2232,7 +2466,6 @@ export function useChat() {
               )
             );
           }
-          // no model argument — backend uses DEFAULT_MODEL from .env
         );
       } catch (err: any) {
         setError(err.message);
@@ -2313,7 +2546,17 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+        />
+        <meta name="theme-color" content="#0f0f10" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body>
         <GoogleOAuthProvider
@@ -2340,7 +2583,7 @@ import LoginButton from "@/components/LoginButton";
 const FEATURES = [
   {
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
       </svg>
@@ -2350,7 +2593,7 @@ const FEATURES = [
   },
   {
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
@@ -2360,7 +2603,7 @@ const FEATURES = [
   },
   {
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
@@ -2370,7 +2613,7 @@ const FEATURES = [
   },
   {
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
       </svg>
@@ -2393,7 +2636,7 @@ export default function HomePage() {
 
   if (loading || !mounted) {
     return (
-      <div className="h-screen flex items-center justify-center bg-surface">
+      <div className="h-screen w-screen flex items-center justify-center bg-surface">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center animate-pulse">
             <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2408,54 +2651,92 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-surface relative overflow-hidden">
-      {/* Ambient background blobs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-accent/5 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-500/5 blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-accent/3 blur-[150px]" />
+    <main className="min-h-screen w-full flex flex-col items-center justify-center bg-surface relative overflow-x-hidden overflow-y-auto">
+      {/* Ambient blobs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div
+          className="absolute rounded-full bg-accent/5 blur-[100px]"
+          style={{
+            width:  "clamp(200px, 50vw, 600px)",
+            height: "clamp(200px, 50vw, 600px)",
+            top:    "-15%",
+            left:   "-10%",
+          }}
+        />
+        <div
+          className="absolute rounded-full bg-blue-500/5 blur-[100px]"
+          style={{
+            width:  "clamp(180px, 45vw, 500px)",
+            height: "clamp(180px, 45vw, 500px)",
+            bottom: "-15%",
+            right:  "-10%",
+          }}
+        />
       </div>
 
       {/* Grid overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.02]"
+        className="absolute inset-0 pointer-events-none opacity-[0.018]"
+        aria-hidden
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
+            "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)",
+          backgroundSize: "clamp(32px, 5vw, 48px) clamp(32px, 5vw, 48px)",
         }}
       />
 
-      <div className="relative z-10 w-full max-w-4xl mx-auto px-6 py-16 flex flex-col items-center gap-16">
+      <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center gap-10 px-4 py-10 sm:py-16">
+
         {/* Hero */}
-        <div className="text-center space-y-6 animate-fade-in">
-          {/* Logo */}
+        <div className="w-full text-center flex flex-col items-center gap-4 sm:gap-6 animate-fade-in">
+          {/* Logo mark */}
           <div className="relative inline-flex">
-            <div className="absolute inset-0 rounded-2xl bg-accent/30 blur-xl" />
-            <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center shadow-glow">
-              <svg className="w-10 h-10 text-white drop-shadow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="absolute inset-0 rounded-2xl bg-accent/25 blur-xl pointer-events-none" />
+            <div
+              className="relative rounded-2xl bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center shadow-glow"
+              style={{
+                width:  "clamp(56px, 8vw, 80px)",
+                height: "clamp(56px, 8vw, 80px)",
+              }}
+            >
+              <svg
+                style={{
+                  width:  "clamp(28px, 4vw, 40px)",
+                  height: "clamp(28px, 4vw, 40px)",
+                }}
+                className="text-white drop-shadow"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                   d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <h1 className="text-5xl sm:text-6xl font-bold text-text-primary tracking-tight">
+          {/* Title */}
+          <div className="space-y-2 sm:space-y-3">
+            <h1
+              className="font-bold text-text-primary tracking-tight"
+              style={{ fontSize: "clamp(2rem, 6vw, 3.75rem)" }}
+            >
               AI{" "}
               <span className="bg-gradient-to-r from-accent to-blue-400 bg-clip-text text-transparent">
                 Chat
               </span>
             </h1>
-            <p className="text-text-secondary text-lg max-w-md mx-auto leading-relaxed">
+            <p
+              className="text-text-secondary max-w-md mx-auto leading-relaxed px-2"
+              style={{ fontSize: "clamp(0.875rem, 2.5vw, 1.125rem)" }}
+            >
               One AI for everything — code, analyze, create, and solve.
-              <br />
               Lightning-fast, secure, and always improving.
             </p>
           </div>
 
           {/* Login */}
-          <div className="pt-2">
+          <div className="pt-1">
             <LoginButton />
           </div>
 
@@ -2465,28 +2746,42 @@ export default function HomePage() {
         </div>
 
         {/* Feature grid */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+        <div
+          className="w-full grid gap-3 animate-fade-in"
+          style={{
+            animationDelay: "0.1s",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+          }}
+        >
           {FEATURES.map((f, i) => (
             <div
               key={i}
-              className="group relative p-5 rounded-2xl bg-surface-1 border border-border hover:border-border-strong transition-all duration-300 hover:shadow-card-hover"
+              className="group relative p-4 rounded-2xl bg-surface-1 border border-border hover:border-border-strong transition-all duration-300 hover:shadow-card-hover"
             >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative flex items-start gap-4">
-                <div className="mt-0.5 p-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20 flex-shrink-0">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <div className="relative flex items-start gap-3">
+                <div className="mt-0.5 p-2 rounded-xl bg-accent/10 text-accent border border-accent/20 flex-shrink-0">
                   {f.icon}
                 </div>
-                <div>
-                  <div className="font-semibold text-text-primary mb-1">{f.title}</div>
-                  <div className="text-text-secondary text-sm leading-relaxed">{f.desc}</div>
+                <div className="min-w-0">
+                  <div className="font-semibold text-text-primary mb-1 text-sm">
+                    {f.title}
+                  </div>
+                  <div className="text-text-secondary text-xs leading-relaxed">
+                    {f.desc}
+                  </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Footer note */}
-        <p className="text-text-muted text-xs text-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        {/* Footer */}
+        <p
+          className="text-text-muted text-xs text-center animate-fade-in"
+          style={{ animationDelay: "0.2s" }}
+        >
           Powered by Ollama · LiteLLM · PostgreSQL
         </p>
       </div>
@@ -2500,35 +2795,75 @@ export default function HomePage() {
 ```tsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { useChat } from "@/hooks/useChat";
+import { useChat, ChatItem } from "@/hooks/useChat";
 import Sidebar from "@/components/Sidebar";
 import ChatWindow from "@/components/ChatWindow";
 
 export default function ChatPage() {
   const { user, loading, logout } = useAuth();
-  const router = useRouter();
+  const router   = useRouter();
   const chatHook = useChat();
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const scrollYRef = useRef(0);
+
+  /* Auth guard */
   useEffect(() => {
     if (!loading && !user) router.push("/");
   }, [user, loading, router]);
 
+  /* Load chats */
   useEffect(() => {
     if (user) chatHook.fetchChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  /* Lock body scroll while drawer is open (preserves scroll pos) */
+  useEffect(() => {
+    if (drawerOpen) {
+      scrollYRef.current = window.scrollY;
+      document.body.style.position   = "fixed";
+      document.body.style.top        = `-${scrollYRef.current}px`;
+      document.body.style.width      = "100%";
+      document.body.style.overflowY  = "scroll";
+    } else {
+      document.body.style.position   = "";
+      document.body.style.top        = "";
+      document.body.style.width      = "";
+      document.body.style.overflowY  = "";
+      window.scrollTo(0, scrollYRef.current);
+    }
+    return () => {
+      document.body.style.position   = "";
+      document.body.style.top        = "";
+      document.body.style.width      = "";
+      document.body.style.overflowY  = "";
+    };
+  }, [drawerOpen]);
+
+  const handleSelectChat = useCallback(
+    (chat: ChatItem) => {
+      chatHook.loadChat(chat);
+      setDrawerOpen(false);
+    },
+    [chatHook]
+  );
+
+  const handleNewChat = useCallback(async (): Promise<ChatItem | null> => {
+    const result = await chatHook.createNewChat();
+    setDrawerOpen(false);
+    return result;
+  }, [chatHook]);
+
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-surface">
+      <div className="h-screen w-screen flex items-center justify-center bg-surface">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          <span className="text-text-secondary text-sm">
-            Loading workspace…
-          </span>
+          <span className="text-text-secondary text-sm">Loading workspace…</span>
         </div>
       </div>
     );
@@ -2537,17 +2872,41 @@ export default function ChatPage() {
   if (!user) return null;
 
   return (
-    <div className="h-screen flex overflow-hidden bg-surface">
-      <Sidebar
-        chats={chatHook.chats}
-        activeChat={chatHook.activeChat}
-        onSelectChat={chatHook.loadChat}
-        onNewChat={chatHook.createNewChat}
-        onRenameChat={chatHook.renameChat}
-        onDeleteChat={chatHook.deleteChat}
-        user={user}
-        onLogout={logout}
-      />
+    <div className="chat-layout">
+      {/* Mobile overlay */}
+      {drawerOpen && (
+        <div
+          className="sidebar-overlay lg:hidden"
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/*
+       * Sidebar — fixed off-canvas drawer on mobile,
+       * static flex child on desktop (lg+).
+       */}
+      <div
+        className={[
+          "sidebar-drawer",
+          "lg:!transform-none lg:!transition-none lg:relative lg:z-auto",
+          drawerOpen ? "open" : "",
+        ].join(" ")}
+      >
+        <Sidebar
+          chats={chatHook.chats}
+          activeChat={chatHook.activeChat}
+          onSelectChat={handleSelectChat}
+          onNewChat={handleNewChat}
+          onRenameChat={chatHook.renameChat}
+          onDeleteChat={chatHook.deleteChat}
+          user={user}
+          onLogout={logout}
+          onMobileClose={() => setDrawerOpen(false)}
+        />
+      </div>
+
+      {/* Main chat area */}
       <ChatWindow
         activeChat={chatHook.activeChat}
         messages={chatHook.messages}
@@ -2555,8 +2914,9 @@ export default function ChatPage() {
         isSending={chatHook.isSending}
         error={chatHook.error}
         onSendMessage={chatHook.sendMessage}
-        onNewChat={chatHook.createNewChat}
+        onNewChat={handleNewChat}
         onDismissError={() => chatHook.setError(null)}
+        onOpenMobileSidebar={() => setDrawerOpen(true)}
       />
     </div>
   );
@@ -2574,10 +2934,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginButton() {
-  const { login } = useAuth();
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { login }  = useAuth();
+  const router     = useRouter();
+  const [error,    setError]   = useState<string | null>(null);
+  const [loading,  setLoading] = useState(false);
 
   const handleSuccess = async (response: CredentialResponse) => {
     if (!response.credential) {
@@ -2615,7 +2975,7 @@ export default function LoginButton() {
         />
       )}
       {error && (
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm animate-fade-in">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm animate-fade-in max-w-xs text-center">
           <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -2633,7 +2993,7 @@ export default function LoginButton() {
 ```tsx
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChatItem } from "@/hooks/useChat";
 
@@ -2651,29 +3011,26 @@ interface SidebarProps {
     profilePicture: string | null;
   };
   onLogout: () => void;
+  onMobileClose?: () => void;
 }
 
 function groupChatsByDate(chats: ChatItem[]) {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterday = new Date(today.getTime() - 86400000);
-  const lastWeek = new Date(today.getTime() - 7 * 86400000);
+  const now       = new Date();
+  const today     = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today.getTime() - 86_400_000);
+  const lastWeek  = new Date(today.getTime() - 7 * 86_400_000);
 
   const groups: Record<string, ChatItem[]> = {
-    Today: [],
-    Yesterday: [],
-    "Last 7 days": [],
-    Older: [],
+    Today: [], Yesterday: [], "Last 7 days": [], Older: [],
   };
 
   for (const chat of chats) {
     const d = new Date(chat.updatedAt);
-    if (d >= today) groups["Today"].push(chat);
+    if      (d >= today)     groups["Today"].push(chat);
     else if (d >= yesterday) groups["Yesterday"].push(chat);
-    else if (d >= lastWeek) groups["Last 7 days"].push(chat);
-    else groups["Older"].push(chat);
+    else if (d >= lastWeek)  groups["Last 7 days"].push(chat);
+    else                     groups["Older"].push(chat);
   }
-
   return groups;
 }
 
@@ -2685,83 +3042,95 @@ interface ChatItemRowProps {
   onDelete: () => void;
 }
 
-function ChatItemRow({ chat, isActive, onSelect, onRename, onDelete }: ChatItemRowProps) {
-  const [editing, setEditing] = useState(false);
-  const [title, setTitle] = useState(chat.title);
+function ChatItemRow({
+  chat, isActive, onSelect, onRename, onDelete,
+}: ChatItemRowProps) {
+  const [editing,  setEditing]  = useState(false);
+  const [title,    setTitle]    = useState(chat.title);
   const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef  = useRef<HTMLDivElement>(null);
 
-  // Sync title if chat prop changes (e.g., auto-title from AI)
   useEffect(() => {
     if (!editing) setTitle(chat.title);
   }, [chat.title, editing]);
 
-  // Close menu on outside click
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    if (!menuOpen) return;
+    const close = (e: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
       }
     };
-    if (menuOpen) document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("mousedown", close);
+    document.addEventListener("touchstart", close, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("touchstart", close);
+    };
   }, [menuOpen]);
 
-  const confirmRename = () => {
-    const trimmed = title.trim();
-    if (trimmed && trimmed !== chat.title) onRename(trimmed);
+  const confirmRename = useCallback(() => {
+    const t = title.trim();
+    if (t && t !== chat.title) onRename(t);
     else setTitle(chat.title);
     setEditing(false);
-  };
+  }, [title, chat.title, onRename]);
 
   return (
     <div
-      className={`group relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
+      role="button"
+      tabIndex={0}
+      aria-label={`Open chat: ${chat.title}`}
+      className={[
+        "group relative flex items-center gap-2 px-3 py-2.5 rounded-xl",
+        "cursor-pointer select-none transition-colors duration-150",
         isActive
           ? "bg-accent/15 text-text-primary border border-accent/25"
-          : "text-text-secondary hover:bg-surface-2 hover:text-text-primary border border-transparent"
-      }`}
+          : "text-text-secondary hover:bg-surface-2 hover:text-text-primary border border-transparent",
+      ].join(" ")}
       onClick={() => !editing && onSelect()}
+      onKeyDown={(e) => { if (e.key === "Enter" && !editing) onSelect(); }}
     >
-      {/* Icon */}
       <svg
-        className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive ? "text-accent" : "text-text-muted group-hover:text-text-secondary"}`}
+        className={`w-4 h-4 flex-shrink-0 ${
+          isActive ? "text-accent" : "text-text-muted group-hover:text-text-secondary"
+        }`}
         fill="none" stroke="currentColor" viewBox="0 0 24 24"
       >
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
 
-      {/* Title / Edit input */}
       {editing ? (
         <input
           ref={inputRef}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") confirmRename();
+            if (e.key === "Enter")  confirmRename();
             if (e.key === "Escape") { setTitle(chat.title); setEditing(false); }
           }}
           onBlur={confirmRename}
           autoFocus
-          className="flex-1 bg-surface-3 text-text-primary text-sm px-2 py-0.5 rounded-md outline-none border border-accent/40 focus:border-accent"
+          className="flex-1 min-w-0 bg-surface-3 text-text-primary text-sm px-2 py-0.5 rounded-md outline-none border border-accent/40 focus:border-accent"
           onClick={(e) => e.stopPropagation()}
         />
       ) : (
-        <span className="flex-1 truncate text-sm">{chat.title}</span>
+        <span className="flex-1 min-w-0 truncate text-sm">{chat.title}</span>
       )}
 
-      {/* Context menu button */}
       {!editing && (
         <div
-          className={`relative transition-opacity ${menuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
           ref={menuRef}
+          className={`relative flex-shrink-0 transition-opacity ${
+            menuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
         >
           <button
+            aria-label="Chat options"
             onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
-            className="p-1 rounded-md hover:bg-surface-3 text-text-muted hover:text-text-primary transition-colors"
-            title="Options"
+            className="p-1.5 rounded-md hover:bg-surface-3 text-text-muted hover:text-text-primary transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 13.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm-5 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm10 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
@@ -2809,46 +3178,36 @@ function ChatItemRow({ chat, isActive, onSelect, onRename, onDelete }: ChatItemR
 }
 
 export default function Sidebar({
-  chats,
-  activeChat,
-  onSelectChat,
-  onNewChat,
-  onRenameChat,
-  onDeleteChat,
-  user,
-  onLogout,
+  chats, activeChat, onSelectChat, onNewChat,
+  onRenameChat, onDeleteChat, user, onLogout, onMobileClose,
 }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(true);
-  const [search, setSearch] = useState("");
+  const [isCollapsed,     setIsCollapsed]     = useState(false);
+  const [search,          setSearch]          = useState("");
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const filtered = search.trim()
     ? chats.filter((c) => c.title.toLowerCase().includes(search.toLowerCase()))
     : chats;
 
-  const grouped = groupChatsByDate(filtered);
+  const grouped  = groupChatsByDate(filtered);
   const hasChats = chats.length > 0;
 
-  const handleDelete = (chatId: string) => {
-    setDeleteConfirmId(chatId);
-  };
-
-  const confirmDelete = () => {
+  const confirmDelete = useCallback(() => {
     if (deleteConfirmId) {
       onDeleteChat(deleteConfirmId);
       setDeleteConfirmId(null);
     }
-  };
+  }, [deleteConfirmId, onDeleteChat]);
 
-  // Collapsed sidebar
-  if (!isOpen) {
+  /* Collapsed — desktop only */
+  if (isCollapsed) {
     return (
       <>
-        <div className="flex flex-col items-center py-3 px-2 gap-3 bg-surface-1 border-r border-border h-full">
+        <aside className="hidden lg:flex flex-col items-center py-3 px-2 gap-3 bg-surface-1 border-r border-border h-full w-14 flex-shrink-0">
           <button
-            onClick={() => setIsOpen(true)}
-            className="p-2.5 rounded-xl hover:bg-surface-2 text-text-muted hover:text-text-primary transition-all focus-ring"
-            title="Open sidebar"
+            onClick={() => setIsCollapsed(false)}
+            className="p-2.5 rounded-xl hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring"
+            aria-label="Expand sidebar"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
@@ -2857,26 +3216,28 @@ export default function Sidebar({
           <div className="h-px w-full bg-border" />
           <button
             onClick={onNewChat}
-            className="p-2.5 rounded-xl hover:bg-accent/15 text-text-muted hover:text-accent transition-all focus-ring"
-            title="New chat"
+            className="p-2.5 rounded-xl hover:bg-accent/15 text-text-muted hover:text-accent transition-colors focus-ring"
+            aria-label="New chat"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </button>
-        </div>
-
-        {/* Delete confirm modal */}
-        {deleteConfirmId && <DeleteModal onConfirm={confirmDelete} onCancel={() => setDeleteConfirmId(null)} />}
+        </aside>
+        {deleteConfirmId && (
+          <DeleteModal onConfirm={confirmDelete} onCancel={() => setDeleteConfirmId(null)} />
+        )}
       </>
     );
   }
 
+  /* Full sidebar */
   return (
     <>
-      <aside className="w-[272px] min-w-[272px] bg-surface-1 border-r border-border flex flex-col h-full overflow-hidden">
+      <aside className="w-full h-full bg-surface-1 border-r border-border flex flex-col overflow-hidden lg:w-[272px] lg:min-w-[272px] lg:flex-shrink-0">
+
         {/* Top bar */}
-        <div className="flex items-center gap-2 p-3 border-b border-border">
+        <div className="flex items-center gap-2 px-3 py-3 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center flex-shrink-0">
               <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2887,31 +3248,46 @@ export default function Sidebar({
             <span className="font-semibold text-sm text-text-primary truncate">AI Chat</span>
           </div>
 
+          {/* New chat */}
           <button
             onClick={onNewChat}
-            className="p-2 rounded-lg hover:bg-accent/15 text-text-muted hover:text-accent transition-all focus-ring"
-            title="New chat (Ctrl+N)"
+            className="p-2 rounded-lg hover:bg-accent/15 text-text-muted hover:text-accent transition-colors focus-ring flex-shrink-0"
+            aria-label="New chat"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </button>
 
+          {/* Desktop collapse */}
           <button
-            onClick={() => setIsOpen(false)}
-            className="p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-all focus-ring"
-            title="Collapse sidebar"
+            onClick={() => setIsCollapsed(true)}
+            className="hidden lg:flex p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring flex-shrink-0"
+            aria-label="Collapse sidebar"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                 d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
           </button>
+
+          {/* Mobile close */}
+          {onMobileClose && (
+            <button
+              onClick={onMobileClose}
+              className="flex lg:hidden p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring flex-shrink-0"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Search */}
         {hasChats && (
-          <div className="px-3 pt-2 pb-1">
+          <div className="px-3 pt-2 pb-1 flex-shrink-0">
             <div className="flex items-center gap-2 bg-surface-2 border border-border rounded-lg px-3 py-1.5">
               <svg className="w-3.5 h-3.5 text-text-muted flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -2921,10 +3297,14 @@ export default function Sidebar({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search chats…"
-                className="flex-1 bg-transparent text-sm text-text-primary placeholder-text-muted outline-none"
+                className="flex-1 min-w-0 bg-transparent text-sm text-text-primary placeholder-text-muted outline-none"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="text-text-muted hover:text-text-secondary transition-colors">
+                <button
+                  onClick={() => setSearch("")}
+                  aria-label="Clear search"
+                  className="flex-shrink-0 text-text-muted hover:text-text-secondary transition-colors"
+                >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -2934,10 +3314,17 @@ export default function Sidebar({
           </div>
         )}
 
-        {/* Chat list */}
-        <div className="flex-1 overflow-y-auto px-2 py-2">
+        {/* Chat list — touch-scrollable */}
+        <div
+          className="flex-1 min-h-0 px-2 py-2"
+          style={{
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            overscrollBehavior: "contain",
+          } as React.CSSProperties}
+        >
           {!hasChats ? (
-            <div className="flex flex-col items-center justify-center h-40 gap-3 text-center px-4">
+            <div className="flex flex-col items-center justify-center h-36 gap-3 text-center px-4">
               <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border flex items-center justify-center">
                 <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -2946,11 +3333,11 @@ export default function Sidebar({
               </div>
               <div>
                 <p className="text-text-secondary text-sm font-medium">No chats yet</p>
-                <p className="text-text-muted text-xs mt-1">Start a conversation below</p>
+                <p className="text-text-muted text-xs mt-1">Start a conversation</p>
               </div>
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-8 text-text-muted text-sm">
+            <div className="text-center py-8 text-text-muted text-sm px-3">
               No chats match &ldquo;{search}&rdquo;
             </div>
           ) : (
@@ -2958,9 +3345,9 @@ export default function Sidebar({
               {Object.entries(grouped).map(([label, items]) =>
                 items.length === 0 ? null : (
                   <div key={label}>
-                    <div className="px-3 py-1 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                    <p className="px-3 py-1 text-xs font-semibold text-text-muted uppercase tracking-wider">
                       {label}
-                    </div>
+                    </p>
                     <div className="space-y-0.5 mt-1">
                       {items.map((chat) => (
                         <ChatItemRow
@@ -2969,7 +3356,7 @@ export default function Sidebar({
                           isActive={activeChat?.id === chat.id}
                           onSelect={() => onSelectChat(chat)}
                           onRename={(t) => onRenameChat(chat.id, t)}
-                          onDelete={() => handleDelete(chat.id)}
+                          onDelete={() => setDeleteConfirmId(chat.id)}
                         />
                       ))}
                     </div>
@@ -2981,7 +3368,13 @@ export default function Sidebar({
         </div>
 
         {/* User panel */}
-        <div className="border-t border-border p-3">
+        <div
+          className="border-t border-border p-3 flex-shrink-0"
+          style={{
+            paddingBottom:
+              "calc(0.75rem + env(safe-area-inset-bottom, 0px))",
+          }}
+        >
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-2 transition-colors group">
             {user.profilePicture ? (
               <Image
@@ -2989,7 +3382,7 @@ export default function Sidebar({
                 alt={user.name}
                 width={34}
                 height={34}
-                className="rounded-full ring-2 ring-border"
+                className="rounded-full ring-2 ring-border flex-shrink-0"
               />
             ) : (
               <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
@@ -3002,8 +3395,8 @@ export default function Sidebar({
             </div>
             <button
               onClick={onLogout}
-              className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all focus-ring"
-              title="Sign out"
+              className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all focus-ring flex-shrink-0"
+              aria-label="Sign out"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -3014,7 +3407,6 @@ export default function Sidebar({
         </div>
       </aside>
 
-      {/* Delete confirm modal */}
       {deleteConfirmId && (
         <DeleteModal
           onConfirm={confirmDelete}
@@ -3025,11 +3417,26 @@ export default function Sidebar({
   );
 }
 
-function DeleteModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+function DeleteModal({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative bg-surface-2 border border-border-strong rounded-2xl shadow-float p-6 max-w-sm w-full animate-bounce-in">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
+      <div
+        className="relative bg-surface-2 border border-border-strong shadow-float w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-5 animate-bounce-in"
+        style={{
+          paddingBottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
+        }}
+      >
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center flex-shrink-0">
             <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3051,7 +3458,7 @@ function DeleteModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel:
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white transition-all text-sm font-medium shadow-sm focus-ring"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white transition-all text-sm font-medium focus-ring"
           >
             Delete
           </button>
@@ -3081,6 +3488,7 @@ interface ChatWindowProps {
   onSendMessage: (content: string) => void;
   onNewChat: () => Promise<ChatItem | null>;
   onDismissError: () => void;
+  onOpenMobileSidebar: () => void;
 }
 
 const SUGGESTIONS = [
@@ -3092,6 +3500,51 @@ const SUGGESTIONS = [
   { icon: "🔒", text: "Best practices for API authentication" },
 ];
 
+/* ── Shared top bar ─────────────────────────────────────────────────── */
+function TopBar({
+  title,
+  isSending,
+  onOpenMobileSidebar,
+}: {
+  title?: string;
+  isSending: boolean;
+  onOpenMobileSidebar: () => void;
+}) {
+  return (
+    <div className="glass border-b border-border flex items-center gap-2 flex-shrink-0 px-3 py-2.5 min-h-[48px]">
+      <button
+        onClick={onOpenMobileSidebar}
+        className="flex lg:hidden flex-shrink-0 p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring"
+        aria-label="Open sidebar"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+            d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      <div className="flex-1 min-w-0">
+        {title ? (
+          <h1 className="font-semibold text-text-primary truncate text-sm leading-tight">
+            {title}
+          </h1>
+        ) : (
+          <span className="font-semibold text-sm text-text-primary lg:hidden">
+            AI Chat
+          </span>
+        )}
+      </div>
+
+      {isSending && (
+        <div className="flex items-center gap-1.5 text-xs text-accent bg-accent/10 border border-accent/20 px-2.5 py-1 rounded-full animate-fade-in flex-shrink-0">
+          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+          <span className="hidden xs:inline">Generating…</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ChatWindow({
   activeChat,
   messages,
@@ -3101,116 +3554,134 @@ export default function ChatWindow({
   onSendMessage,
   onNewChat,
   onDismissError,
+  onOpenMobileSidebar,
 }: ChatWindowProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef     = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isCreating,    setIsCreating]    = useState(false);
 
-  const scrollToBottom = useCallback(
-    (behavior: ScrollBehavior = "smooth") => {
-      messagesEndRef.current?.scrollIntoView({ behavior });
-    },
-    []
-  );
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    messagesEndRef.current?.scrollIntoView({ behavior, block: "end" });
+  }, []);
 
-  // Auto-scroll when messages stream in
+  /* Auto-scroll on new messages */
   useEffect(() => {
-    const lastMsg = messages[messages.length - 1];
-    if (lastMsg?.role === "assistant" && isSending) {
-      scrollToBottom("smooth");
-    } else if (lastMsg?.role === "user") {
+    const last = messages[messages.length - 1];
+    if (!last) return;
+    if ((last.role === "assistant" && isSending) || last.role === "user") {
       scrollToBottom("smooth");
     }
   }, [messages, isSending, scrollToBottom]);
 
-  // Show scroll-to-bottom button
+  /* Show / hide scroll-to-bottom FAB */
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
-    const handler = () => {
+    const onScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = el;
-      setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 200);
+      setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 180);
     };
-    el.addEventListener("scroll", handler, { passive: true });
-    return () => el.removeEventListener("scroll", handler);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Handle suggestion — create chat first, then send
+  /* Suggestion tap — create chat then send */
   const handleSuggestion = useCallback(
     async (text: string) => {
       if (isCreating) return;
       setIsCreating(true);
       try {
         const chat = await onNewChat();
-        if (chat) {
-          setTimeout(() => onSendMessage(text), 80);
-        }
+        if (chat) setTimeout(() => onSendMessage(text), 80);
       } finally {
         setIsCreating(false);
       }
     },
-    [onNewChat, onSendMessage, isCreating]
+    [isCreating, onNewChat, onSendMessage]
   );
 
   const visibleMessages = messages.filter((m) => m.role !== "system");
 
-  // ─── Empty / Welcome state ──────────────────────────────
+  /* ── Welcome / empty state ──────────────────────────────────────── */
   if (!activeChat) {
     return (
-      <div className="flex-1 flex flex-col bg-surface overflow-hidden">
-        <div className="flex-1 flex items-center justify-center overflow-y-auto px-4 py-8">
-          <div className="w-full max-w-2xl space-y-10 animate-fade-in">
-            {/* Welcome header */}
-            <div className="text-center space-y-3">
-              <div className="relative inline-flex">
-                <div className="absolute inset-0 rounded-2xl bg-accent/20 blur-lg" />
-                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center shadow-glow">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <h2 className="text-2xl font-bold text-text-primary">
-                How can I help you?
-              </h2>
-              <p className="text-text-secondary text-sm">
-                Start a conversation or pick a suggestion below.
-              </p>
-            </div>
+      <div
+        className="flex-1 flex flex-col min-w-0 bg-surface"
+        style={{ minHeight: 0, overflow: "hidden" }}
+      >
+        <TopBar isSending={isSending} onOpenMobileSidebar={onOpenMobileSidebar} />
 
-            {/* Suggestions grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {SUGGESTIONS.map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleSuggestion(s.text)}
-                  disabled={isCreating}
-                  className="group text-left p-4 rounded-2xl bg-surface-1 border border-border hover:border-accent/30 hover:bg-surface-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-wait"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="text-xl flex-shrink-0 mt-0.5">{s.icon}</span>
-                    <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors leading-relaxed">
-                      {s.text}
-                    </span>
+        {/* Scrollable area */}
+        <div className="messages-scroll">
+          <div className="min-h-full flex items-center justify-center px-4 py-8">
+            <div className="w-full max-w-2xl flex flex-col items-center gap-8 animate-fade-in">
+
+              {/* Header */}
+              <div className="text-center flex flex-col items-center gap-3">
+                <div className="relative inline-flex">
+                  <div className="absolute inset-0 rounded-2xl bg-accent/20 blur-lg pointer-events-none" />
+                  <div
+                    className="relative rounded-2xl bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center shadow-glow"
+                    style={{
+                      width:  "clamp(52px, 8vw, 64px)",
+                      height: "clamp(52px, 8vw, 64px)",
+                    }}
+                  >
+                    <svg
+                      style={{
+                        width:  "clamp(26px, 4vw, 32px)",
+                        height: "clamp(26px, 4vw, 32px)",
+                      }}
+                      className="text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
                   </div>
-                </button>
-              ))}
+                </div>
+                <h2
+                  className="font-bold text-text-primary"
+                  style={{ fontSize: "clamp(1.125rem, 4vw, 1.5rem)" }}
+                >
+                  How can I help you?
+                </h2>
+                <p className="text-text-secondary text-sm text-center px-2">
+                  Start a conversation or pick a suggestion below.
+                </p>
+              </div>
+
+              {/* Suggestions */}
+              <div
+                className="w-full grid gap-2"
+                style={{
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+                }}
+              >
+                {SUGGESTIONS.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSuggestion(s.text)}
+                    disabled={isCreating}
+                    className="group text-left p-3.5 rounded-2xl bg-surface-1 border border-border hover:border-accent/30 hover:bg-surface-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-wait"
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <span className="text-lg flex-shrink-0 leading-snug">{s.icon}</span>
+                      <span className="text-xs sm:text-sm text-text-secondary group-hover:text-text-primary transition-colors leading-relaxed">
+                        {s.text}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Input always visible even on empty state */}
         <MessageInput
           onSend={handleSuggestion}
           disabled={isSending || isCreating}
@@ -3219,74 +3690,64 @@ export default function ChatWindow({
     );
   }
 
-  // ─── Active chat ────────────────────────────────────────
+  /* ── Active chat ────────────────────────────────────────────────── */
   return (
-    <div className="flex-1 flex flex-col bg-surface overflow-hidden relative">
-      {/* Chat header */}
-      <div className="glass border-b border-border px-6 py-3 flex items-center gap-3 flex-shrink-0">
-        <div className="flex-1 min-w-0">
-          <h1 className="font-semibold text-text-primary truncate text-sm">
-            {activeChat.title}
-          </h1>
-        </div>
-        {isSending && (
-          <div className="flex items-center gap-2 text-xs text-accent bg-accent/10 border border-accent/20 px-3 py-1 rounded-full animate-fade-in">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            Generating…
-          </div>
-        )}
-      </div>
+    <div
+      className="flex-1 flex flex-col min-w-0 bg-surface relative"
+      style={{ minHeight: 0, overflow: "hidden" }}
+    >
+      <TopBar
+        title={activeChat.title}
+        isSending={isSending}
+        onOpenMobileSidebar={onOpenMobileSidebar}
+      />
 
       {/* Error bar */}
       {error && (
-        <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-500/10 border-b border-red-500/20 animate-fade-in">
-          <div className="flex items-center gap-2 text-red-400 text-sm min-w-0">
-            <svg
-              className="w-4 h-4 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
+        <div className="flex items-center justify-between gap-3 px-4 py-2 bg-red-500/10 border-b border-red-500/20 animate-fade-in flex-shrink-0">
+          <div className="flex items-center gap-2 text-red-400 min-w-0">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="truncate">{error}</span>
+            <span className="truncate text-xs sm:text-sm">{error}</span>
           </div>
           <button
             onClick={onDismissError}
-            className="text-red-400 hover:text-red-300 transition-colors flex-shrink-0 text-xs underline underline-offset-2"
+            className="flex-shrink-0 text-red-400 hover:text-red-300 text-xs underline underline-offset-2 whitespace-nowrap transition-colors"
           >
             Dismiss
           </button>
         </div>
       )}
 
-      {/* Messages area */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
+      {/*
+       * THE scroll container.
+       * .messages-scroll class sets:
+       *   overflow-y: auto
+       *   -webkit-overflow-scrolling: touch
+       *   overscroll-behavior-y: contain
+       *   touch-action: pan-y
+       *   flex: 1 1 0%
+       *   min-height: 0
+       */}
+      <div ref={scrollContainerRef} className="messages-scroll">
         {isLoading && visibleMessages.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
+          <div className="flex items-center justify-center h-full min-h-[200px]">
             <div className="flex flex-col items-center gap-3">
               <div className="w-7 h-7 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-              <span className="text-text-muted text-sm">
-                Loading messages…
-              </span>
+              <span className="text-text-muted text-sm">Loading messages…</span>
             </div>
           </div>
         ) : visibleMessages.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center space-y-2">
+          <div className="flex items-center justify-center h-full min-h-[200px] px-4">
+            <div className="text-center space-y-1">
               <p className="text-text-muted text-sm">No messages yet.</p>
-              <p className="text-text-muted text-xs">
-                Send a message below to start.
-              </p>
+              <p className="text-text-muted text-xs">Send a message below to start.</p>
             </div>
           </div>
         ) : (
-          <div className="max-w-3xl mx-auto w-full px-4 py-6 space-y-1">
+          <div className="messages-list">
             {visibleMessages.map((message, idx) => (
               <MessageBubble
                 key={message.id}
@@ -3298,35 +3759,28 @@ export default function ChatWindow({
                 }
               />
             ))}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} aria-hidden style={{ height: 1 }} />
           </div>
         )}
       </div>
 
-      {/* Scroll-to-bottom button */}
+      {/* Scroll-to-bottom FAB */}
       {showScrollBtn && (
         <button
           onClick={() => scrollToBottom("smooth")}
-          className="absolute bottom-28 right-6 z-20 p-2.5 rounded-full bg-surface-2 border border-border-strong shadow-float hover:bg-surface-3 text-text-secondary hover:text-text-primary transition-all animate-fade-in"
-          title="Scroll to bottom"
+          className="absolute z-20 p-2.5 rounded-full bg-surface-2 border border-border-strong shadow-float hover:bg-surface-3 text-text-secondary hover:text-text-primary transition-all animate-fade-in"
+          style={{
+            bottom: "calc(var(--input-height, 80px) + 12px)",
+            right:  "clamp(0.75rem, 2vw, 1.25rem)",
+          }}
+          aria-label="Scroll to bottom"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
       )}
 
-      {/* Input */}
       <MessageInput onSend={onSendMessage} disabled={isSending} />
     </div>
   );
@@ -3351,29 +3805,26 @@ interface MessageBubbleProps {
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* ignore */
-    }
+    } catch { /* ignore */ }
   }, [text]);
 
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-all duration-150 text-text-muted hover:text-text-primary hover:bg-surface-3"
-      title="Copy code"
+      className="flex items-center gap-1.5 px-2 py-1 rounded-md text-2xs transition-colors text-text-muted hover:text-text-primary hover:bg-surface-3"
+      aria-label="Copy code"
     >
       {copied ? (
         <>
           <svg className="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <span className="text-green-400">Copied!</span>
+          <span className="text-green-400">Copied</span>
         </>
       ) : (
         <>
@@ -3381,7 +3832,7 @@ function CopyButton({ text }: { text: string }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
               d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
-          Copy
+          <span className="hidden xs:inline">Copy</span>
         </>
       )}
     </button>
@@ -3390,20 +3841,19 @@ function CopyButton({ text }: { text: string }) {
 
 function CopyMessageButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {/* ignore */}
+    } catch { /* ignore */ }
   }, [text]);
 
   return (
     <button
       onClick={handleCopy}
-      className="p-1.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-surface-2 transition-all focus-ring"
-      title="Copy message"
+      className="p-1.5 rounded-lg text-text-muted hover:text-text-secondary hover:bg-surface-2 transition-colors focus-ring"
+      aria-label="Copy message"
     >
       {copied ? (
         <svg className="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3419,26 +3869,53 @@ function CopyMessageButton({ text }: { text: string }) {
   );
 }
 
-export default function MessageBubble({ message, isStreaming = false }: MessageBubbleProps) {
-  const isUser = message.role === "user";
+export default function MessageBubble({
+  message,
+  isStreaming = false,
+}: MessageBubbleProps) {
+  const isUser  = message.role === "user";
   const isEmpty = !message.content;
 
-  const formatTime = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
+  const formatTime = (d: string) =>
+    new Date(d).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className={`group flex gap-3 py-4 px-2 rounded-2xl transition-colors hover:bg-surface-1/40 ${isUser ? "flex-row-reverse" : "flex-row"} animate-fade-in`}>
+    <div
+      className={`group flex gap-2 py-3 rounded-xl transition-colors hover:bg-surface-1/30 animate-fade-in ${
+        isUser ? "flex-row-reverse" : "flex-row"
+      }`}
+    >
       {/* Avatar */}
-      <div className="flex-shrink-0 mt-0.5">
+      <div className="flex-shrink-0 mt-1">
         {isUser ? (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+          <div
+            className="rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white font-bold shadow-sm"
+            style={{
+              width:    "clamp(26px, 4vw, 32px)",
+              height:   "clamp(26px, 4vw, 32px)",
+              fontSize: "clamp(9px, 1.5vw, 11px)",
+            }}
+          >
             U
           </div>
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center shadow-sm">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div
+            className="rounded-full bg-gradient-to-br from-accent to-blue-500 flex items-center justify-center shadow-sm"
+            style={{
+              width:  "clamp(26px, 4vw, 32px)",
+              height: "clamp(26px, 4vw, 32px)",
+            }}
+          >
+            <svg
+              style={{
+                width:  "clamp(13px, 2vw, 16px)",
+                height: "clamp(13px, 2vw, 16px)",
+              }}
+              className="text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                 d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -3446,77 +3923,94 @@ export default function MessageBubble({ message, isStreaming = false }: MessageB
         )}
       </div>
 
-      {/* Bubble content */}
-      <div className={`flex flex-col gap-1.5 max-w-[85%] min-w-0 ${isUser ? "items-end" : "items-start"}`}>
-        {/* Sender name + time */}
-        <div className={`flex items-center gap-2 px-1 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
-          <span className="text-xs font-semibold text-text-secondary">
+      {/* Content column */}
+      <div
+        className={`flex flex-col gap-1 min-w-0 ${isUser ? "items-end" : "items-start"}`}
+        style={{ maxWidth: "min(85%, 680px)" }}
+      >
+        {/* Meta row */}
+        <div
+          className={`flex items-center gap-1.5 px-0.5 flex-wrap ${
+            isUser ? "flex-row-reverse" : "flex-row"
+          }`}
+        >
+          <span className="text-2xs font-semibold text-text-secondary whitespace-nowrap">
             {isUser ? "You" : "AI Assistant"}
           </span>
-          <span className="text-xs text-text-muted">
+          <span className="text-2xs text-text-muted whitespace-nowrap">
             {formatTime(message.createdAt)}
           </span>
           {message.modelName && !isUser && (
-            <span className="text-xs text-text-muted bg-surface-2 border border-border px-2 py-0.5 rounded-full">
+            <span className="text-2xs text-text-muted bg-surface-2 border border-border px-1.5 py-0.5 rounded-full whitespace-nowrap">
               {message.modelName.replace("ollama/", "")}
             </span>
           )}
         </div>
 
-        {/* Message body */}
+        {/* Bubble */}
         <div
-          className={`relative rounded-2xl px-4 py-3 ${
+          className={`relative rounded-2xl min-w-0 w-full overflow-hidden ${
             isUser
-              ? "bg-accent/20 border border-accent/25 text-text-primary rounded-tr-sm"
-              : "bg-surface-1 border border-border text-text-primary rounded-tl-sm"
+              ? "bg-accent/20 border border-accent/25 rounded-tr-sm"
+              : "bg-surface-1 border border-border rounded-tl-sm"
           }`}
+          style={{
+            padding:
+              "clamp(0.5rem, 2vw, 0.75rem) clamp(0.625rem, 2.5vw, 1rem)",
+          }}
         >
           {isEmpty ? (
             <LoadingThinking />
           ) : isUser ? (
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words text-text-primary">
+              {message.content}
+            </p>
           ) : (
             <div className="message-content">
               <ReactMarkdown
                 components={{
-                  code({ node, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "");
+                  table: ({ children }) => (
+                    <div className="table-wrapper">
+                      <table>{children}</table>
+                    </div>
+                  ),
+                  code({ className, children }) {
+                    const match   = /language-(\w+)/.exec(className || "");
                     const codeStr = String(children).replace(/\n$/, "");
-                    const isBlock = codeStr.includes("\n") || match;
+                    const isBlock = codeStr.includes("\n") || !!match;
 
                     if (isBlock) {
                       const lang = match?.[1] || "text";
                       return (
-                        <div className="code-block-wrapper my-3 rounded-xl overflow-hidden border border-border">
+                        <div className="code-block-wrapper my-2 border border-border">
                           <div className="code-block-header">
                             <span className="text-accent/80 font-mono">{lang}</span>
                             <CopyButton text={codeStr} />
                           </div>
-                          <SyntaxHighlighter
-                            style={oneDark}
-                            language={lang}
-                            PreTag="div"
-                            customStyle={{
-                              margin: 0,
-                              borderRadius: 0,
-                              background: "#12121a",
-                              fontSize: "0.83rem",
-                              lineHeight: "1.6",
-                              padding: "1em 1.25em",
-                            }}
-                            codeTagProps={{ style: { fontFamily: "JetBrains Mono, monospace" } }}
-                          >
-                            {codeStr}
-                          </SyntaxHighlighter>
+                          <div className="code-block-scroll">
+                            <SyntaxHighlighter
+                              style={oneDark}
+                              language={lang}
+                              PreTag="div"
+                              customStyle={{
+                                margin:       0,
+                                borderRadius: 0,
+                                background:   "#12121a",
+                                fontSize:     "clamp(0.7rem, 1.8vw, 0.82rem)",
+                                lineHeight:   "1.6",
+                                padding:      "0.75em 1em",
+                              }}
+                              codeTagProps={{
+                                style: { fontFamily: "JetBrains Mono, monospace" },
+                              }}
+                            >
+                              {codeStr}
+                            </SyntaxHighlighter>
+                          </div>
                         </div>
                       );
                     }
-
-                    return (
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    );
+                    return <code className={className}>{children}</code>;
                   },
                 }}
               >
@@ -3527,9 +4021,13 @@ export default function MessageBubble({ message, isStreaming = false }: MessageB
           )}
         </div>
 
-        {/* Actions row — shown on hover */}
+        {/* Copy action */}
         {!isEmpty && !isStreaming && (
-          <div className={`flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity px-1 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
+          <div
+            className={`flex items-center gap-1 px-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+              isUser ? "flex-row-reverse" : "flex-row"
+            }`}
+          >
             <CopyMessageButton text={message.content} />
           </div>
         )}
@@ -3540,13 +4038,16 @@ export default function MessageBubble({ message, isStreaming = false }: MessageB
 
 function LoadingThinking() {
   return (
-    <div className="flex items-center gap-2 py-1">
+    <div className="flex items-center gap-2 py-0.5">
       <div className="flex gap-1">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"
-            style={{ animationDelay: `${i * 0.2}s` }}
+            className="w-1.5 h-1.5 rounded-full bg-accent"
+            style={{
+              animation:      "pulse-dot 1.4s ease-in-out infinite",
+              animationDelay: `${i * 0.2}s`,
+            }}
           />
         ))}
       </div>
@@ -3561,112 +4062,183 @@ function LoadingThinking() {
 ```tsx
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import {
+  useState,
+  useRef,
+  useLayoutEffect,
+  useEffect,
+  useCallback,
+} from "react";
 
 interface MessageInputProps {
   onSend: (content: string) => void;
   disabled: boolean;
 }
 
+const LINE_HEIGHT = 24;   // px — must match .chat-textarea line-height (1.6 × 15px ≈ 24px)
+const MAX_HEIGHT  = 160;  // px — ~6 lines before textarea scrolls internally
+const PADDING_TOP = 13;   // px — top padding inside textarea
+
 export default function MessageInput({ onSend, disabled }: MessageInputProps) {
   const [input, setInput] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef       = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-resize textarea
-  useEffect(() => {
+  /* ── Auto-resize ─────────────────────────────────────────────────── */
+  const resize = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 220) + "px";
-  }, [input]);
+    const next = Math.min(el.scrollHeight, MAX_HEIGHT);
+    el.style.height = `${next}px`;
+    el.style.overflowY = el.scrollHeight > MAX_HEIGHT ? "auto" : "hidden";
+  }, []);
 
+  /* After every input change — useLayoutEffect avoids a visible jump */
+  useLayoutEffect(() => {
+    resize();
+  }, [input, resize]);
+
+  /* Also handle orientation / window resize */
+  useEffect(() => {
+    window.addEventListener("resize", resize, { passive: true });
+    return () => window.removeEventListener("resize", resize);
+  }, [resize]);
+
+  /* ── Send ────────────────────────────────────────────────────────── */
   const handleSend = useCallback(() => {
     const trimmed = input.trim();
     if (!trimmed || disabled) return;
     onSend(trimmed);
     setInput("");
-    if (textareaRef.current) textareaRef.current.style.height = "auto";
+    const el = textareaRef.current;
+    if (el) {
+      el.style.height = `${LINE_HEIGHT + PADDING_TOP}px`;
+      el.style.overflowY = "hidden";
+    }
   }, [input, disabled, onSend]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    },
+    [handleSend]
+  );
 
-  const canSend = !!input.trim() && !disabled;
+  const canSend  = input.trim().length > 0 && !disabled;
+  const showCount = input.length > 500;
+  const overLimit = input.length > 3000;
 
   return (
-    <div className="flex-shrink-0 border-t border-border bg-surface/80 backdrop-blur-sm px-4 py-4">
-      <div className="max-w-3xl mx-auto space-y-2">
-        {/* Main input container */}
-        <div className="relative bg-surface-1 border border-border hover:border-border-strong focus-within:border-accent/50 focus-within:shadow-glow-sm rounded-2xl transition-all duration-200">
-          {/* Textarea */}
+    <div className="input-wrapper">
+      <div className="input-inner">
+
+        {/* Textarea + action bar container */}
+        <div className={`textarea-container${disabled ? " disabled" : ""}`}>
+
+          {/*
+           * The textarea:
+           *  - font-size is max(16px, ...) → prevents iOS auto-zoom on focus
+           *  - overflow-y starts hidden; switches to auto when > MAX_HEIGHT
+           *  - touch-action: auto → lets the finger scroll inside when tall
+           *  - resize: none → we handle it manually
+           */}
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={
-              disabled
-                ? "AI is responding…"
-                : "Message AI (Enter to send, Shift+Enter for newline)"
-            }
+            placeholder={disabled ? "AI is responding…" : "Message AI…"}
             disabled={disabled}
             rows={1}
-            className="w-full bg-transparent text-text-primary placeholder-text-muted text-sm leading-6 outline-none resize-none px-4 pt-3.5 pb-3 max-h-[220px] disabled:cursor-not-allowed"
+            aria-label="Message input"
+            className="chat-textarea"
+            style={{
+              height:     `${LINE_HEIGHT + PADDING_TOP}px`,
+              overflowY:  "hidden",
+              touchAction: "auto",
+            }}
           />
 
-          {/* Bottom bar */}
-          <div className="flex items-center justify-end px-3 pb-2.5">
-            {/* Character count hint */}
-            {input.length > 500 && (
-              <span
-                className={`text-xs mr-3 ${
-                  input.length > 3000 ? "text-red-400" : "text-text-muted"
-                }`}
-              >
-                {input.length.toLocaleString()}
-              </span>
-            )}
-
-            {/* Send button */}
-            <button
-              onClick={handleSend}
-              disabled={!canSend}
-              className={`flex items-center justify-center w-8 h-8 rounded-xl transition-all duration-150 focus-ring ${
-                canSend
-                  ? "bg-accent hover:bg-accent-hover text-white shadow-glow-sm"
-                  : "bg-surface-3 text-text-muted cursor-not-allowed"
-              }`}
-              title="Send (Enter)"
+          {/* Bottom action bar */}
+          <div className="input-bottom-bar">
+            {/* Hint */}
+            <span
+              className="text-2xs text-text-muted truncate hidden xs:block select-none"
+              aria-hidden
             >
-              {disabled ? (
-                <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              {disabled ? "Generating…" : "Shift + Enter for new line"}
+            </span>
+
+            <div className="flex items-center gap-2 ml-auto flex-shrink-0">
+              {/* Character count */}
+              {showCount && (
+                <span
+                  className={`text-2xs tabular-nums select-none ${
+                    overLimit ? "text-red-400" : "text-text-muted"
+                  }`}
+                  aria-live="polite"
+                  aria-label={`${input.length} characters`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 12h14m-7-7l7 7-7 7"
-                  />
-                </svg>
+                  {input.length.toLocaleString()}
+                  {overLimit && " — too long"}
+                </span>
               )}
-            </button>
+
+              {/* Send button */}
+              <button
+                onClick={handleSend}
+                disabled={!canSend}
+                aria-label="Send message"
+                className={`send-btn${canSend ? " active" : " inactive"}`}
+              >
+                {disabled ? (
+                  /* Spinner */
+                  <svg
+                    className="w-4 h-4 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12" cy="12" r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
+                  </svg>
+                ) : (
+                  /* Arrow */
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M5 12h14m-7-7l7 7-7 7"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Disclaimer */}
-        <p className="text-center text-xs text-text-muted">
-          AI can make mistakes · All data stays on your server · Shift+Enter
-          for newlines
+        <p className="input-disclaimer">
+          AI can make mistakes · All data stays on your server
         </p>
       </div>
     </div>
@@ -3685,8 +4257,11 @@ export default function LoadingDots() {
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="w-2 h-2 rounded-full bg-accent/60 animate-pulse"
-          style={{ animationDelay: `${i * 0.2}s` }}
+          className="w-2 h-2 rounded-full bg-accent/60"
+          style={{
+            animation:      "pulse-dot 1.4s ease-in-out infinite",
+            animationDelay: `${i * 0.2}s`,
+          }}
         />
       ))}
     </div>

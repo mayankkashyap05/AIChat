@@ -19,14 +19,13 @@ export interface MessageItem {
 }
 
 export function useChat() {
-  const [chats, setChats] = useState<ChatItem[]>([]);
+  const [chats,      setChats]      = useState<ChatItem[]>([]);
   const [activeChat, setActiveChat] = useState<ChatItem | null>(null);
-  const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSending, setIsSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [messages,   setMessages]   = useState<MessageItem[]>([]);
+  const [isLoading,  setIsLoading]  = useState(false);
+  const [isSending,  setIsSending]  = useState(false);
+  const [error,      setError]      = useState<string | null>(null);
 
-  // Ref so streaming callbacks always see the latest active chat
   const activeChatRef = useRef<ChatItem | null>(null);
   activeChatRef.current = activeChat;
 
@@ -58,7 +57,7 @@ export function useChat() {
 
   const createNewChat = useCallback(async (): Promise<ChatItem | null> => {
     try {
-      const data = await api.createChat();
+      const data    = await api.createChat();
       const newChat: ChatItem = data.chat;
       setChats((prev) => [newChat, ...prev]);
       setActiveChat(newChat);
@@ -71,7 +70,6 @@ export function useChat() {
     }
   }, []);
 
-  // No model param — backend always uses its configured default
   const sendMessage = useCallback(
     async (content: string) => {
       const chat = activeChatRef.current;
@@ -81,8 +79,8 @@ export function useChat() {
       setError(null);
 
       const tempUserMsg: MessageItem = {
-        id: `temp-user-${Date.now()}`,
-        role: "user",
+        id:        `temp-user-${Date.now()}`,
+        role:      "user",
         content,
         createdAt: new Date().toISOString(),
       };
@@ -90,9 +88,9 @@ export function useChat() {
 
       const tempAssistantId = `temp-assistant-${Date.now()}`;
       const tempAssistantMsg: MessageItem = {
-        id: tempAssistantId,
-        role: "assistant",
-        content: "",
+        id:        tempAssistantId,
+        role:      "assistant",
+        content:   "",
         createdAt: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, tempAssistantMsg]);
@@ -101,7 +99,7 @@ export function useChat() {
         await api.sendMessageStream(
           chat.id,
           content,
-          // onChunk
+          /* onChunk */
           (chunk: string) => {
             setMessages((prev) =>
               prev.map((m) =>
@@ -111,16 +109,16 @@ export function useChat() {
               )
             );
           },
-          // onDone
+          /* onDone */
           (messageId: string) => {
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === tempAssistantId ? { ...m, id: messageId } : m
               )
             );
-            fetchChats(); // refresh list so auto-title appears
+            fetchChats();
           },
-          // onError
+          /* onError */
           (errorMsg: string) => {
             setError(errorMsg);
             setMessages((prev) =>
@@ -131,7 +129,6 @@ export function useChat() {
               )
             );
           }
-          // no model argument — backend uses DEFAULT_MODEL from .env
         );
       } catch (err: any) {
         setError(err.message);
