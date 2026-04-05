@@ -3,13 +3,13 @@ model_list:
     litellm_params:
       model: ollama/llama3.2
       api_base: http://localhost:11434
-      stream: true
+      stream: flase
 
-  - model_name: ollama/llama3.1
+  - model_name: ollama/tinyllama
     litellm_params:
-      model: ollama/llama3.1
+      model: ollama/tinyllama
       api_base: http://localhost:11434
-      stream: false
+      stream: true
 
   - model_name: ollama/mistral
     litellm_params:
