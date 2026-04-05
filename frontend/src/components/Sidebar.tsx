@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ChatItem } from "@/hooks/useChat";
+
+// ─── Types ─────────────────────────────────────────────────────────────────
 
 interface SidebarProps {
   chats: ChatItem[];
@@ -20,6 +23,8 @@ interface SidebarProps {
   onLogout: () => void;
   onMobileClose?: () => void;
 }
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
 function groupChatsByDate(chats: ChatItem[]) {
   const now       = new Date();
@@ -40,6 +45,8 @@ function groupChatsByDate(chats: ChatItem[]) {
   }
   return groups;
 }
+
+// ─── ChatItemRow ────────────────────────────────────────────────────────────
 
 interface ChatItemRowProps {
   chat: ChatItem;
@@ -184,6 +191,279 @@ function ChatItemRow({
   );
 }
 
+// ─── DeleteModal ─────────────────────────────────────────────────────────────
+
+interface DeleteModalProps {
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+function DeleteModal({ onConfirm, onCancel }: DeleteModalProps) {
+  // Scroll lock
+  useEffect(() => {
+    const scrollY = window.scrollY;
+    const prev = {
+      position:  document.body.style.position,
+      top:       document.body.style.top,
+      width:     document.body.style.width,
+      overflowY: document.body.style.overflowY,
+    };
+    document.body.style.position  = "fixed";
+    document.body.style.top       = `-${scrollY}px`;
+    document.body.style.width     = "100%";
+    document.body.style.overflowY = "scroll";
+    return () => {
+      document.body.style.position  = prev.position;
+      document.body.style.top       = prev.top;
+      document.body.style.width     = prev.width;
+      document.body.style.overflowY = prev.overflowY;
+      window.scrollTo({ top: scrollY, behavior: "instant" });
+    };
+  }, []);
+
+  // Keyboard handlers
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+      if (e.key === "Enter")  onConfirm();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onCancel, onConfirm]);
+
+  // ── The portal content ──────────────────────────────────────────────────
+  const modal = (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-modal-title"
+      aria-describedby="delete-modal-desc"
+      style={{
+        // Covers the ENTIRE viewport — not just the sidebar
+        position: "fixed",
+        inset:    0,
+        // Grid centering: single atomic operation on both axes
+        display:      "grid",
+        placeItems:   "center",
+        // Breathing room from every edge including notches
+        paddingTop:    "calc(env(safe-area-inset-top,    0px) + clamp(1rem, 4vh, 2rem))",
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + clamp(1rem, 4vh, 2rem))",
+        paddingLeft:   "calc(env(safe-area-inset-left,   0px) + clamp(1rem, 4vw, 2rem))",
+        paddingRight:  "calc(env(safe-area-inset-right,  0px) + clamp(1rem, 4vw, 2rem))",
+        // Backdrop
+        backgroundColor:     "rgba(0, 0, 0, 0.65)",
+        backdropFilter:      "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
+        // Above absolutely everything
+        zIndex: 9999,
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onCancel();
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width:     "min(100%, 400px)",
+          maxHeight: "100%",
+          overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
+          background:   "rgb(26, 26, 30)",
+          border:       "1px solid rgba(255,255,255,0.12)",
+          borderRadius: "1.25rem",
+          boxShadow: [
+            "0 0 0 1px rgba(255,255,255,0.04)",
+            "0 8px 32px rgba(0,0,0,0.6)",
+            "0 32px 64px rgba(0,0,0,0.4)",
+          ].join(", "),
+          padding:   "clamp(1.25rem, 4vw, 1.75rem)",
+          animation: "modal-pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            display:      "flex",
+            alignItems:   "flex-start",
+            gap:          "clamp(0.75rem, 2vw, 1rem)",
+            marginBottom: "clamp(1rem, 3vw, 1.25rem)",
+          }}
+        >
+          <div
+            style={{
+              flexShrink:     0,
+              width:          "clamp(36px, 8vw, 44px)",
+              height:         "clamp(36px, 8vw, 44px)",
+              borderRadius:   "0.75rem",
+              background:     "rgba(239, 68, 68, 0.12)",
+              border:         "1px solid rgba(239, 68, 68, 0.25)",
+              display:        "flex",
+              alignItems:     "center",
+              justifyContent: "center",
+            }}
+          >
+            <svg
+              style={{
+                width:  "clamp(18px, 4vw, 22px)",
+                height: "clamp(18px, 4vw, 22px)",
+                color:  "rgb(248, 113, 113)",
+              }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </div>
+
+          <div style={{ minWidth: 0 }}>
+            <h3
+              id="delete-modal-title"
+              style={{
+                fontWeight:   600,
+                fontSize:     "clamp(0.9375rem, 2.5vw, 1.0625rem)",
+                color:        "rgb(240, 240, 242)",
+                lineHeight:   1.3,
+                marginBottom: "0.3rem",
+              }}
+            >
+              Delete chat?
+            </h3>
+            <p
+              id="delete-modal-desc"
+              style={{
+                fontSize:   "clamp(0.8125rem, 2vw, 0.875rem)",
+                color:      "rgb(152, 152, 166)",
+                lineHeight: 1.5,
+              }}
+            >
+              This conversation will be permanently deleted and cannot be recovered.
+            </p>
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div style={{ display: "flex", gap: "clamp(0.5rem, 2vw, 0.625rem)" }}>
+          <button
+            onClick={onCancel}
+            autoFocus
+            style={{
+              flex:          1,
+              padding:       "clamp(0.6rem, 2vw, 0.7rem) 1rem",
+              borderRadius:  "0.75rem",
+              border:        "1px solid rgba(255,255,255,0.1)",
+              background:    "rgba(255,255,255,0.05)",
+              color:         "rgb(152, 152, 166)",
+              fontSize:      "clamp(0.8125rem, 2vw, 0.875rem)",
+              fontWeight:    500,
+              cursor:        "pointer",
+              transition:    "background 0.15s, color 0.15s, border-color 0.15s",
+              outline:       "none",
+            }}
+            onMouseEnter={(e) => {
+              const b = e.currentTarget;
+              b.style.background  = "rgba(255,255,255,0.09)";
+              b.style.color       = "rgb(240,240,242)";
+              b.style.borderColor = "rgba(255,255,255,0.18)";
+            }}
+            onMouseLeave={(e) => {
+              const b = e.currentTarget;
+              b.style.background  = "rgba(255,255,255,0.05)";
+              b.style.color       = "rgb(152,152,166)";
+              b.style.borderColor = "rgba(255,255,255,0.1)";
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.outline      = "2px solid rgba(124,106,247,0.7)";
+              e.currentTarget.style.outlineOffset = "2px";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.outline = "none";
+            }}
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={onConfirm}
+            style={{
+              flex:          1,
+              padding:       "clamp(0.6rem, 2vw, 0.7rem) 1rem",
+              borderRadius:  "0.75rem",
+              border:        "1px solid rgba(239,68,68,0.4)",
+              background:    "rgb(220, 38, 38)",
+              color:         "rgb(255, 255, 255)",
+              fontSize:      "clamp(0.8125rem, 2vw, 0.875rem)",
+              fontWeight:    600,
+              cursor:        "pointer",
+              transition:    "background 0.15s, box-shadow 0.15s",
+              outline:       "none",
+              boxShadow:     "0 2px 8px rgba(220,38,38,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              const b = e.currentTarget;
+              b.style.background = "rgb(185, 28, 28)";
+              b.style.boxShadow  = "0 4px 16px rgba(220,38,38,0.45)";
+            }}
+            onMouseLeave={(e) => {
+              const b = e.currentTarget;
+              b.style.background = "rgb(220, 38, 38)";
+              b.style.boxShadow  = "0 2px 8px rgba(220,38,38,0.3)";
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.outline      = "2px solid rgba(248,113,113,0.7)";
+              e.currentTarget.style.outlineOffset = "2px";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.outline = "none";
+            }}
+          >
+            Delete
+          </button>
+        </div>
+
+        {/* Keyboard hint */}
+        <p
+          style={{
+            marginTop:  "clamp(0.625rem, 2vw, 0.875rem)",
+            textAlign:  "center",
+            fontSize:   "0.6875rem",
+            color:      "rgba(152,152,166,0.5)",
+            userSelect: "none",
+          }}
+          aria-hidden="true"
+        >
+          Press{" "}
+          <kbd
+            style={{
+              fontFamily:   "monospace",
+              background:   "rgba(255,255,255,0.07)",
+              padding:      "0.1em 0.35em",
+              borderRadius: "4px",
+              fontSize:     "0.9em",
+            }}
+          >
+            Esc
+          </kbd>{" "}
+          to cancel
+        </p>
+      </div>
+    </div>
+  );
+
+  // ── Mount on document.body via portal ───────────────────────────────────
+  // This escapes overflow:hidden, z-index stacking contexts, and any
+  // transform on ancestor elements — the modal always covers the full screen.
+  return createPortal(modal, document.body);
+}
+
+// ─── Sidebar (main export) ───────────────────────────────────────────────────
+
 export default function Sidebar({
   chats, activeChat, onSelectChat, onNewChat,
   onRenameChat, onDeleteChat, user, onLogout, onMobileClose,
@@ -206,7 +486,7 @@ export default function Sidebar({
     }
   }, [deleteConfirmId, onDeleteChat]);
 
-  /* Collapsed — desktop only */
+  /* Collapsed sidebar — desktop only */
   if (isCollapsed) {
     return (
       <>
@@ -231,8 +511,12 @@ export default function Sidebar({
             </svg>
           </button>
         </aside>
+
         {deleteConfirmId && (
-          <DeleteModal onConfirm={confirmDelete} onCancel={() => setDeleteConfirmId(null)} />
+          <DeleteModal
+            onConfirm={confirmDelete}
+            onCancel={() => setDeleteConfirmId(null)}
+          />
         )}
       </>
     );
@@ -255,7 +539,6 @@ export default function Sidebar({
             <span className="font-semibold text-sm text-text-primary truncate">AI Chat</span>
           </div>
 
-          {/* New chat */}
           <button
             onClick={onNewChat}
             className="p-2 rounded-lg hover:bg-accent/15 text-text-muted hover:text-accent transition-colors focus-ring flex-shrink-0"
@@ -266,7 +549,6 @@ export default function Sidebar({
             </svg>
           </button>
 
-          {/* Desktop collapse */}
           <button
             onClick={() => setIsCollapsed(true)}
             className="hidden lg:flex p-2 rounded-lg hover:bg-surface-2 text-text-muted hover:text-text-primary transition-colors focus-ring flex-shrink-0"
@@ -278,7 +560,6 @@ export default function Sidebar({
             </svg>
           </button>
 
-          {/* Mobile close */}
           {onMobileClose && (
             <button
               onClick={onMobileClose}
@@ -321,7 +602,7 @@ export default function Sidebar({
           </div>
         )}
 
-        {/* Chat list — touch-scrollable */}
+        {/* Chat list */}
         <div
           className="flex-1 min-h-0 px-2 py-2"
           style={{
@@ -378,8 +659,7 @@ export default function Sidebar({
         <div
           className="border-t border-border p-3 flex-shrink-0"
           style={{
-            paddingBottom:
-              "calc(0.75rem + env(safe-area-inset-bottom, 0px))",
+            paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))",
           }}
         >
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-2 transition-colors group">
@@ -414,6 +694,7 @@ export default function Sidebar({
         </div>
       </aside>
 
+      {/* Portal renders directly on document.body — always full-screen centered */}
       {deleteConfirmId && (
         <DeleteModal
           onConfirm={confirmDelete}
@@ -421,56 +702,5 @@ export default function Sidebar({
         />
       )}
     </>
-  );
-}
-
-function DeleteModal({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onCancel}
-        aria-hidden="true"
-      />
-      <div
-        className="relative bg-surface-2 border border-border-strong shadow-float w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-5 animate-bounce-in"
-        style={{
-          paddingBottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
-        }}
-      >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </div>
-          <div>
-            <h3 className="font-semibold text-text-primary">Delete chat?</h3>
-            <p className="text-text-secondary text-sm">This action cannot be undone.</p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={onCancel}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-surface-3 border border-border text-text-secondary hover:text-text-primary hover:bg-surface-4 transition-all text-sm font-medium focus-ring"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white transition-all text-sm font-medium focus-ring"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }
